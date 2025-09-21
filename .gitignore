@@ -1,0 +1,13 @@
+# Node and build artifacts
+node_modules/
+dist/
+build/
+.next/
+.cache/
+.tmp/
+yarn-error.log
+npm-debug.log*
+.env
+.env.*
+.DS_Store
+coverage/
