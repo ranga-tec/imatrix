@@ -1,0 +1,27 @@
+{
+  "name": "imatrix-website",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:api": "cd apps/api && npm run dev",
+    "dev:web": "cd apps/web && npm run dev",
+    "build": "npm run build:api && npm run build:web",
+    "build:api": "cd apps/api && npm run build",
+    "build:web": "cd apps/web && npm run build",
+    "start": "cd apps/api && npm start",
+    "setup": "npm run setup:api && npm run setup:web",
+    "setup:api": "cd apps/api && npm install && npx prisma generate && npx prisma migrate dev",
+    "setup:web": "cd apps/web && npm install",
+    "test": "npm run test:api && npm run test:web",
+    "test:api": "cd apps/api && npm test",
+    "test:web": "cd apps/web && npm test"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "workspaces": [
+    "apps/*"
+  ]
+}
