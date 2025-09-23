@@ -56,7 +56,7 @@ app.use(helmet({
 app.use(cors({
   origin: [
     process.env.CORS_ORIGIN?.split(',') || 'http://localhost:5173',
-    'https://your-netlify-site.netlify.app', // Add your actual Netlify URL here
+    'https://68d2642d424e0b3fe4d3f8a3--imatix.netlify.app', 
     'https://imatrix-production.up.railway.app'
   ].flat(),
   credentials: true
