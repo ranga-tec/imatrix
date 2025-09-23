@@ -1,3 +1,8 @@
+// imatrix-website/apps/web/src/contexts/AuthContext.jsx
+// ===============================
+// AUTH CONTEXT (AuthContext.jsx)
+// ===============================
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 

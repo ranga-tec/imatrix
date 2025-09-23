@@ -54,13 +54,14 @@ app.use(helmet({
 }));
 
 app.use(cors({
-  origin: [
-    process.env.CORS_ORIGIN?.split(',') || 'http://localhost:5173',
-    'https://68d2642d424e0b3fe4d3f8a3--imatix.netlify.app', 
-    'https://imatrix-production.up.railway.app'
-  ].flat(),
-  credentials: true
+  origin: [
+    process.env.CORS_ORIGIN?.split(',') || 'http://localhost:5173',
+    'https://68d26847c5f5c44ed386e2ad--imatix.netlify.app', // <-- ✅ Add this
+    'https://imatrix-production.up.railway.app'
+  ].flat(),
+  credentials: true
 }));
+
 
 // Rate limiting
 // Rate limiting - More permissive for development
