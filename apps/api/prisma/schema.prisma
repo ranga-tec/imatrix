@@ -6,21 +6,15 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"  // Changed from "sqlite"
   url      = env("DATABASE_URL")
-}
-
-enum Role {
-  ADMIN
-  EDITOR
-  VIEWER
 }
 
 model User {
   id           Int      @id @default(autoincrement())
   email        String   @unique
   passwordHash String
-  role         Role     @default(EDITOR)
+  role         String   @default("EDITOR")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -28,59 +22,55 @@ model User {
 }
 
 model Category {
-  id   Int    @id @default(autoincrement())
-  name String @unique
-  slug String @unique
-
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  slug  String @unique
   posts Post[]
 
   @@map("categories")
 }
 
 model Post {
-  id         Int      @id @default(autoincrement())
-  title      String
-  slug       String   @unique
-  body       String?
-  excerpt    String?
-  published  Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  categories Category[]
-  media      Media[]
+  id          Int        @id @default(autoincrement())
+  title       String
+  slug        String     @unique
+  body        String?
+  excerpt     String?
+  published   Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  categories  Category[]
+  media       Media[]
 
   @@map("posts")
 }
 
 model Product {
-  id          Int     @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String
-  slug        String  @unique
+  slug        String   @unique
   summary     String?
   description String?
-  specs       Json?
+  specs       Json?    // Changed from JSONB to Json
   price       String?
-  featured    Boolean @default(false)
+  featured    Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
-  media Media[]
+  media       Media[]
 
   @@map("products")
 }
 
 model Solution {
-  id          Int     @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String
-  slug        String  @unique
+  slug        String   @unique
   description String?
-  benefits    Json?
-  features    Json?
+  benefits    Json?    // Changed from JSONB to Json
+  features    Json?    // Changed from JSONB to Json
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
-  media Media[]
+  media       Media[]
 
   @@map("solutions")
 }
@@ -91,7 +81,7 @@ model Download {
   fileUrl   String
   fileName  String?
   fileSize  String?
-  kind      String   // "manual", "software", "report", "brochure"
+  kind      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -99,15 +89,13 @@ model Download {
 }
 
 model Media {
-  id         Int     @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   url        String
   fileName   String?
-  type       String  @default("image") // image, video, file
+  type       String   @default("image")
   alt        String?
   caption    String?
   createdAt  DateTime @default(now())
-
-  // Relations
   postId     Int?
   productId  Int?
   solutionId Int?
@@ -132,13 +120,13 @@ model ContactMessage {
 }
 
 model AuditLog {
-  id          Int      @id @default(autoincrement())
-  actorEmail  String
-  action      String   // CREATE, UPDATE, DELETE
-  entity      String   // Post, Product, etc.
-  entityId    Int?
-  meta        Json?    // Additional context
-  createdAt   DateTime @default(now())
+  id         Int      @id @default(autoincrement())
+  actorEmail String
+  action     String
+  entity     String
+  entityId   Int?
+  meta       Json?    // Changed from JSONB to Json
+  createdAt  DateTime @default(now())
 
   @@map("audit_logs")
 }
