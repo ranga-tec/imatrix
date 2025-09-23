@@ -40,6 +40,8 @@ const logger = pino({
 });
 
 const app = express();
+// Trust proxy for Railway
+app.set('trust proxy', true);
 const PORT = process.env.PORT || 8080;
 
 // Ensure upload directory exists
