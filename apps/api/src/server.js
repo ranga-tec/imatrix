@@ -104,15 +104,29 @@ app.options('*', cors(corsOptions));
 // Rate limiting - More permissive for development
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: process.env.NODE_ENV === 'production' ? 100 : 1000, // Higher limit for development
+  max: process.env.NODE_ENV === 'production' ? 100 : 1000,
   message: { ok: false, error: 'Too many requests' },
-  skip: (req) => process.env.NODE_ENV !== 'production' && (req.ip === '::1' || req.ip === '127.0.0.1') // Skip rate limiting for localhost in development
+  standardHeaders: true,
+  legacyHeaders: false,
+  // Fix for Railway proxy setup
+  trustProxy: true,
+  keyGenerator: (req) => {
+    return req.ip || req.connection.remoteAddress || 'unknown';
+  },
+  skip: (req) => process.env.NODE_ENV !== 'production' && (req.ip === '::1' || req.ip === '127.0.0.1')
 });
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: process.env.NODE_ENV === 'production' ? 5 : 50, // Much higher for development
+  max: process.env.NODE_ENV === 'production' ? 5 : 50,
   message: { ok: false, error: 'Too many auth attempts' },
+  standardHeaders: true,
+  legacyHeaders: false,
+  // Fix for Railway proxy setup
+  trustProxy: true,
+  keyGenerator: (req) => {
+    return req.ip || req.connection.remoteAddress || 'unknown';
+  },
   skip: (req) => process.env.NODE_ENV !== 'production' && (req.ip === '::1' || req.ip === '127.0.0.1')
 });
 
