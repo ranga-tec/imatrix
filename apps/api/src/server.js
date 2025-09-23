@@ -91,8 +91,24 @@ app.use((req, res, next) => {
 });
 
 // Health check
-app.get('/health', (req, res) => {
-  res.json({ ok: true, timestamp: new Date().toISOString() });
+app.get('/', (req, res) => {
+  res.json({ 
+    ok: true, 
+    message: 'iMatrix API Server',
+    version: '1.0.0',
+    endpoints: {
+      auth: '/auth',
+      posts: '/posts',
+      products: '/products',
+      solutions: '/solutions',
+      categories: '/categories',
+      downloads: '/downloads',
+      media: '/media',
+      contact: '/contact',
+      audit: '/audit',
+      health: '/health'
+    }
+  });
 });
 
 // API routes
