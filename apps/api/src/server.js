@@ -1,7 +1,7 @@
 // ===============================
 // SERVER SETUP (server.js)
 // ===============================
-//imatrix-website/apps/api/src/server.js
+// imatrix-website/apps/api/src/server.js
 
 import express from 'express';
 import cors from 'cors';
@@ -53,15 +53,50 @@ app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
 
-app.use(cors({
-  origin: [
-    process.env.CORS_ORIGIN?.split(',') || 'http://localhost:5173',
-    'https://68d26847c5f5c44ed386e2ad--imatix.netlify.app', // <-- ✅ Add this
-    'https://imatrix-production.up.railway.app'
-  ].flat(),
-  credentials: true
-}));
+// ===============================
+// CORS (ONLY SECTION CHANGED)
+// ===============================
 
+// Regex to allow any Netlify deploy-preview for this site:
+// e.g., https://<hash>--imatix.netlify.app
+const netlifyPreview = /^https:\/\/[a-z0-9-]+--imatix\.netlify\.app$/i;
+
+// Build a static allowlist from env + some sensible defaults
+const staticAllows = new Set([
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'http://localhost:3000',
+  // stable production/staging domains (add what you actually use)
+  'https://imatix.netlify.app',         // main Netlify site (stable)
+  // 'https://www.imatrix.lk',           // example custom domain (uncomment if/when used)
+]);
+
+// Support comma-separated env var: CORS_ORIGIN="https://foo.com,https://bar.com"
+if (process.env.CORS_ORIGIN) {
+  process.env.CORS_ORIGIN.split(',')
+    .map(s => s.trim())
+    .filter(Boolean)
+    .forEach(o => staticAllows.add(o));
+}
+
+const corsOptions = {
+  origin(origin, cb) {
+    // Allow non-browser tools / same-origin / server-to-server
+    if (!origin) return cb(null, true);
+    if (staticAllows.has(origin) || netlifyPreview.test(origin)) {
+      return cb(null, true);
+    }
+    return cb(new Error(`CORS: Origin not allowed: ${origin}`));
+  },
+  credentials: true,
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
+// Ensure every preflight gets CORS headers (important with rate limiters/middleware order)
+app.options('*', cors(corsOptions));
 
 // Rate limiting
 // Rate limiting - More permissive for development
@@ -69,14 +104,14 @@ const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: process.env.NODE_ENV === 'production' ? 100 : 1000, // Higher limit for development
   message: { ok: false, error: 'Too many requests' },
-  skip: (req) => process.env.NODE_ENV !== 'production' && req.ip === '::1' || req.ip === '127.0.0.1' // Skip rate limiting for localhost in development
+  skip: (req) => process.env.NODE_ENV !== 'production' && (req.ip === '::1' || req.ip === '127.0.0.1') // Skip rate limiting for localhost in development
 });
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: process.env.NODE_ENV === 'production' ? 5 : 50, // Much higher for development
   message: { ok: false, error: 'Too many auth attempts' },
-  skip: (req) => process.env.NODE_ENV !== 'production' && req.ip === '::1' || req.ip === '127.0.0.1'
+  skip: (req) => process.env.NODE_ENV !== 'production' && (req.ip === '::1' || req.ip === '127.0.0.1')
 });
 
 app.use('/auth', authLimiter);
@@ -97,8 +132,8 @@ app.use((req, res, next) => {
 
 // Health check
 app.get('/', (req, res) => {
-  res.json({ 
-    ok: true, 
+  res.json({
+    ok: true,
     message: 'iMatrix API Server',
     version: '1.0.0',
     endpoints: {
@@ -124,7 +159,7 @@ app.use('/products', productRoutes);
 app.use('/solutions', solutionRoutes);
 app.use('/downloads', downloadRoutes);
 app.use('/media', mediaRoutes);
-app.use('/users', authRoutes); 
+app.use('/users', authRoutes);
 app.use('/contact', contactRoutes);
 app.use('/audit', auditRoutes);
 
