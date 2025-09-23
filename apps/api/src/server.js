@@ -151,6 +151,8 @@ app.get('/', (req, res) => {
   });
 });
 
+
+
 // API routes
 app.use('/auth', authRoutes);
 app.use('/posts', postRoutes);
