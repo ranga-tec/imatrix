@@ -6,7 +6,7 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/imatrix/',
+  // Remove this line: base: '/imatrix/',
   server: {
     proxy: {
       '/api': {
