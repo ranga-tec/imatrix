@@ -1,3 +1,8 @@
+// ===============================
+//  PRODUCTS ROUTES (products.js)
+// ===============================
+//imatrix-website/apps/api/src/routes/products.js
+
 import express from 'express';
 import { z } from 'zod';
 import { PrismaClient } from '@prisma/client';

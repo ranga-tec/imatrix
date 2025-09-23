@@ -103,6 +103,7 @@ app.use('/products', productRoutes);
 app.use('/solutions', solutionRoutes);
 app.use('/downloads', downloadRoutes);
 app.use('/media', mediaRoutes);
+app.use('/users', authRoutes); 
 app.use('/contact', contactRoutes);
 app.use('/audit', auditRoutes);
 

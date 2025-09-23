@@ -1,5 +1,5 @@
 // ===============================
-// FIXED ADMIN APP COMPONENT (AdminApp.jsx)
+//  ADMIN APP COMPONENT (AdminApp.jsx)
 // ===============================
 import React from 'react';
 import { Admin, Resource } from 'react-admin';
@@ -82,10 +82,16 @@ const transformedDataProvider = {
   },
 
   getOne: async (resource, params) => {
+  const token = localStorage.getItem('auth_token'); // ✅ Add missing token
+  
   try {
+    // ✅ Use correct URL pattern that matches your API routes
     const url = `${API_BASE}/${resource}/id/${params.id}`;
     const response = await fetch(url, {
-      headers: { 'Authorization': `Bearer ${token}` }
+      headers: { 
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
     });
     
     if (!response.ok) {
@@ -178,64 +184,81 @@ const transformedDataProvider = {
   },
 
   create: async (resource, params) => {
-    const token = localStorage.getItem('auth_token');
-    
-    try {
-      const response = await fetch(`${API_BASE}/${resource}`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(params.data),
-      });
+  const token = localStorage.getItem('auth_token');
+  
+  try {
+    let url = `${API_BASE}/${resource}`;
+    let headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    };
+    let body = JSON.stringify(params.data);
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const json = await response.json();
+    // ✅ Special handling for media uploads
+    if (resource === 'media' && params.data.file) {
+      url = `${API_BASE}/media/upload`;
+      const formData = new FormData();
+      formData.append('file', params.data.file);
+      if (params.data.alt) formData.append('alt', params.data.alt);
+      if (params.data.caption) formData.append('caption', params.data.caption);
       
-      if (!json.ok) {
-        throw new Error(json.error || 'API error');
-      }
-
-      return { data: json.data };
-    } catch (error) {
-      console.error(`Error creating ${resource}:`, error);
-      throw error;
+      headers = { 'Authorization': `Bearer ${token}` }; // Remove Content-Type for FormData
+      body = formData;
     }
-  },
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body,
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const json = await response.json();
+    
+    if (!json.ok) {
+      throw new Error(json.error || 'API error');
+    }
+
+    return { data: json.data };
+  } catch (error) {
+    console.error(`Error creating ${resource}:`, error);
+    throw error;
+  }
+},
 
   update: async (resource, params) => {
-    const token = localStorage.getItem('auth_token');
-    
-    try {
-      const response = await fetch(`${API_BASE}/${resource}/${params.id}`, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(params.data),
-      });
+  const token = localStorage.getItem('auth_token');
+  
+  try {
+    // ✅ Use PATCH method and correct URL pattern
+    const response = await fetch(`${API_BASE}/${resource}/${params.id}`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(params.data),
+    });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const json = await response.json();
-      
-      if (!json.ok) {
-        throw new Error(json.error || 'API error');
-      }
-
-      return { data: json.data };
-    } catch (error) {
-      console.error(`Error updating ${resource}/${params.id}:`, error);
-      throw error;
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-  },
+
+    const json = await response.json();
+    
+    if (!json.ok) {
+      throw new Error(json.error || 'API error');
+    }
+
+    return { data: json.data };
+  } catch (error) {
+    console.error(`Error updating ${resource}/${params.id}:`, error);
+    throw error;
+  }
+},
 
   updateMany: async (resource, params) => {
     const token = localStorage.getItem('auth_token');
