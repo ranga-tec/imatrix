@@ -13,7 +13,8 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.1",
     "react-admin": "^4.16.0",
-    "ra-data-simple-rest": "^4.16.0"
+    "ra-data-simple-rest": "^4.16.0",
+    "axios": "^1.6.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",
