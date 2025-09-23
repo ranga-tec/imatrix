@@ -54,7 +54,11 @@ app.use(helmet({
 }));
 
 app.use(cors({
-  origin: process.env.CORS_ORIGIN?.split(',') || 'http://localhost:5173',
+  origin: [
+    process.env.CORS_ORIGIN?.split(',') || 'http://localhost:5173',
+    'https://your-netlify-site.netlify.app', // Add your actual Netlify URL here
+    'https://imatrix-production.up.railway.app'
+  ].flat(),
   credentials: true
 }));
 
