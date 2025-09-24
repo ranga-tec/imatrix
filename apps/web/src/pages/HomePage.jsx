@@ -1,3 +1,9 @@
+// ===============================
+//  HOME PAGE COMPONENT
+// ===============================
+// imatrix-website/apps/web/src/pages/HomePage.jsx 
+// Main landing page showcasing products, features, solutions, and company info.
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useApi } from '../contexts/ApiContext';
@@ -57,6 +63,27 @@ const testimonials = [
   }
 ];
 
+const clientLogos = [
+  {
+    id: 1,
+    name: 'ABC Corporation',
+    logo: 'https://via.placeholder.com/120x60/4f46e5/ffffff?text=ABC+Corp',
+    featured: true
+  },
+  {
+    id: 2,
+    name: 'XYZ Industries',
+    logo: 'https://via.placeholder.com/120x60/06b6d4/ffffff?text=XYZ+Industries',
+    featured: true
+  },
+  {
+    id: 3,
+    name: 'Global Tech',
+    logo: 'https://via.placeholder.com/120x60/f472b6/ffffff?text=Global+Tech',
+    featured: true
+  }
+];
+
 const HERO_IMG = "https://images.unsplash.com/photo-1584438784894-089d6a62b8fa?q=80&w=1600&auto=format&fit=crop";
 const HERO_ALT = "Access control controller and cabling close-up for enterprise security";
 
@@ -97,6 +124,8 @@ export default function HomePage() {
     fetchData();
   }, [api]);
 
+
+  
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       {/* Decorative gradient background */}

@@ -1,3 +1,9 @@
+// =============================== 
+//  ADMIN POSTS RESOURCE
+// ===============================
+// imatrix-website/apps/web/src/admin/resources/posts.jsx 
+// Admin interface for managing blog posts.
+
 import React from 'react';
 import {
   List, Datagrid, TextField, DateField, BooleanField, 

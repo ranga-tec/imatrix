@@ -1,3 +1,10 @@
+// ===============================
+//  DOWNLOADS PAGE COMPONENT
+// ===============================
+// imatrix-website/apps/web/src/pages/DownloadsPage.jsx 
+// Displays a list of downloadable resources with search and filter functionality.
+
+
 import React, { useState, useEffect } from 'react';
 import { useApi } from '../contexts/ApiContext';
 import { 

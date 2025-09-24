@@ -1,3 +1,9 @@
+// ===============================
+//  ADMIN DOWNLOADS RESOURCE
+// ===============================
+// imatrix-website/apps/web/src/admin/resources/downloads.jsx 
+// Admin interface for managing downloadable resources.
+
 import React from 'react';
 import {
   List, Datagrid, TextField, DateField, BooleanField, 

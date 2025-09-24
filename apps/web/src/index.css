@@ -159,3 +159,57 @@
     display: none !important;
   }
 }
+
+@keyframes scroll-rtl {
+  0% { 
+    transform: translateX(0); 
+  }
+  100% { 
+    transform: translateX(-50%); 
+  }
+}
+
+/* Apply animation to carousel */
+.animate-scroll-rtl {
+  animation: scroll-rtl 40s linear infinite;
+  width: fit-content;
+}
+
+/* Pause animation on hover for better UX */
+.animate-scroll-rtl:hover {
+  animation-play-state: paused;
+}
+
+/* Ensure smooth transitions */
+.animate-scroll-rtl img {
+  transition: opacity 0.3s ease-in-out, filter 0.3s ease-in-out;
+}
+
+/* Optional: Add a subtle pulse effect to logos */
+@keyframes pulse-subtle {
+  0%, 100% { 
+    opacity: 0.6; 
+  }
+  50% { 
+    opacity: 0.8; 
+  }
+}
+
+/* Apply pulse to logos (optional) */
+.client-logo-pulse {
+  animation: pulse-subtle 3s ease-in-out infinite;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .animate-scroll-rtl {
+    animation-duration: 30s; /* Faster on mobile */
+  }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .animate-scroll-rtl {
+    animation: none;
+  }
+}

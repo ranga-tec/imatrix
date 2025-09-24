@@ -1,3 +1,9 @@
+// ===============================
+//  ADMIN SOLUTIONS RESOURCE
+// ===============================
+// imatrix-website/apps/web/src/admin/resources/solutions.jsx 
+// Admin interface for managing solutions.
+
 import React from 'react';
 import {
   List, Datagrid, TextField, DateField, BooleanField, 
