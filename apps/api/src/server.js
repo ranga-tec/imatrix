@@ -1,7 +1,7 @@
 // ===============================
-// SERVER SETUP (server.js)
+// COMPLETE SERVER.JS WITH FIXED STATIC FILE SERVING
 // ===============================
-// imatrix-website/apps/api/src/server.js
+// apps/api/src/server.js
 
 import express from 'express';
 import cors from 'cors';
@@ -44,19 +44,13 @@ const app = express();
 app.set('trust proxy', true);
 const PORT = process.env.PORT || 8080;
 
-// Ensure upload directory exists
-const uploadDir = join(__dirname, '..', process.env.UPLOAD_PATH || 'public/uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
 // Security middleware
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
 
 // ===============================
-// CORS (ONLY SECTION CHANGED)
+// CORS CONFIGURATION
 // ===============================
 
 // Regex to allow any Netlify deploy-preview for this site:
@@ -100,7 +94,6 @@ app.use(cors(corsOptions));
 // Ensure every preflight gets CORS headers (important with rate limiters/middleware order)
 app.options('*', cors(corsOptions));
 
-// Rate limiting
 // Rate limiting - More permissive for development
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -137,8 +130,79 @@ app.use(limiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Serve static files
-app.use('/uploads', express.static(join(__dirname, '..', 'public/uploads')));
+// ===============================
+// FIXED STATIC FILE SERVING
+// ===============================
+
+// Determine upload path
+const staticUploadPath = join(__dirname, '..', 'public', 'uploads');
+console.log('Upload directory path:', staticUploadPath);
+
+// Ensure upload directory exists
+if (!fs.existsSync(staticUploadPath)) {
+  console.log('Creating upload directory:', staticUploadPath);
+  fs.mkdirSync(staticUploadPath, { recursive: true });
+} else {
+  console.log('Upload directory exists');
+  try {
+    const files = fs.readdirSync(staticUploadPath);
+    console.log('Files in upload directory:', files.length, 'files');
+    if (files.length > 0) {
+      console.log('First few files:', files.slice(0, 5));
+    }
+  } catch (err) {
+    console.error('Error reading upload directory:', err);
+  }
+}
+
+// Add a directory listing route for debugging
+app.get('/uploads', (req, res) => {
+  try {
+    const files = fs.readdirSync(staticUploadPath);
+    res.json({
+      ok: true,
+      uploadPath: staticUploadPath,
+      filesCount: files.length,
+      files: files.map(file => {
+        const filePath = join(staticUploadPath, file);
+        const stats = fs.statSync(filePath);
+        return {
+          name: file,
+          size: stats.size,
+          modified: stats.mtime,
+          url: `/uploads/${file}`
+        };
+      })
+    });
+  } catch (error) {
+    console.error('Error listing upload directory:', error);
+    res.status(500).json({
+      ok: false,
+      error: 'Could not list upload directory',
+      uploadPath: staticUploadPath,
+      details: error.message
+    });
+  }
+});
+
+// Serve static files with proper CORS headers
+app.use('/uploads', (req, res, next) => {
+  // Add CORS headers for images
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  
+  // Log file requests
+  console.log('File request:', req.method, req.url);
+  next();
+}, express.static(staticUploadPath, {
+  maxAge: '1d', // Cache for 1 day
+  etag: false,
+  lastModified: true,
+  setHeaders: (res, path, stat) => {
+    console.log('Serving file:', path);
+  }
+}));
 
 // Request logging
 app.use((req, res, next) => {
@@ -146,7 +210,11 @@ app.use((req, res, next) => {
   next();
 });
 
+// ===============================
+// API ROUTES
+// ===============================
 
+// Health check route
 app.get('/', (req, res) => {
   res.json({
     ok: true,
@@ -206,6 +274,7 @@ app.use('*', (req, res) => {
 app.listen(PORT, () => {
   logger.info(`Server running on port ${PORT}`);
   logger.info(`Environment: ${process.env.NODE_ENV}`);
+  logger.info(`Upload path: ${staticUploadPath}`);
 });
 
 export default app;
