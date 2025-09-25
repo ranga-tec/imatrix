@@ -110,7 +110,7 @@ export default function DownloadsPage() {
       
       // Trigger download
       const link = document.createElement('a');
-      link.href = download.url;
+      link.href = download.fileurl;
       link.download = download.filename || download.title;
       link.target = '_blank';
       document.body.appendChild(link);
@@ -119,7 +119,7 @@ export default function DownloadsPage() {
     } catch (error) {
       console.error('Download failed:', error);
       // Fallback: open in new window
-      window.open(download.url, '_blank');
+      window.open(download.fileurl, '_blank');
     }
   };
 
