@@ -1,3 +1,9 @@
+// ===============================
+//  AUTH MIDDLEWARE
+// ===============================
+// imatrix-website/apps/api/src/middleware/auth.js 
+// Middleware for handling authentication and authorization using JWT and Prisma.
+
 import jwt from 'jsonwebtoken';
 
 let prisma;
