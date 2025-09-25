@@ -134,7 +134,7 @@ router.post('/upload', authenticate, requireRole('ADMIN', 'EDITOR'), upload.sing
       data: {
         title,
         description: description || null,
-        fileUrl: `/uploads/downloads/${req.file.filename}`,
+        fileUrl: `${process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : ''}/uploads/downloads/${req.file.filename}`,
         fileName: req.file.originalname,
         fileSize: readableFileSize,
         kind: kind || 'manual'
