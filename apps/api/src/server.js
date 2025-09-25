@@ -155,7 +155,8 @@ if (!fs.existsSync(staticUploadPath)) {
   }
 }
 
-// Add a directory listing route for debugging
+// Directory listing route (AFTER static files)
+// This only runs if static file doesn't exist
 app.get('/uploads', (req, res) => {
   try {
     const files = fs.readdirSync(staticUploadPath);
@@ -187,21 +188,15 @@ app.get('/uploads', (req, res) => {
 
 // Serve static files with proper CORS headers
 app.use('/uploads', (req, res, next) => {
-  // Add CORS headers for images
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
-  
-  // Log file requests
   console.log('File request:', req.method, req.url);
   next();
 }, express.static(staticUploadPath, {
-  maxAge: '1d', // Cache for 1 day
+  maxAge: '1d',
   etag: false,
-  lastModified: true,
-  setHeaders: (res, path, stat) => {
-    console.log('Serving file:', path);
-  }
+  lastModified: true
 }));
 
 // Request logging
