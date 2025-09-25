@@ -424,12 +424,12 @@ export default function AdminApp() {
       {user?.role === 'ADMIN' && (
         <>
           <Resource
-            name="users"
-            list={UserList}
-            edit={UserEdit}
-            create={UserCreate}
-            options={{ label: 'Users & Roles' }}
-          />
+  name="auth/users"  
+  list={UserList}
+  edit={UserEdit}
+  create={UserCreate}
+  options={{ label: 'Users & Roles' }}
+/>
           <Resource
             name="audit"
             list={AuditList}
