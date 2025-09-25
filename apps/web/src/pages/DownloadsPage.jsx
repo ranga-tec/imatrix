@@ -146,14 +146,14 @@ export default function DownloadsPage() {
             
             <div className="mt-3 flex items-center gap-4 text-xs text-white/50">
               {download.fileSize && (
-                <span>{formatFileSize(download.fileSize)}</span>
-              )}
-              {download.updatedAt && (
-                <span className="flex items-center gap-1">
-                  <Calendar className="h-3 w-3" />
-                  {formatDate(download.updatedAt)}
-                </span>
-              )}
+  <span>{download.fileSize}</span>  // Just display it directly, it's already formatted
+)}
+              {download.createdAt && (  // Use createdAt instead of updatedAt
+  <span className="flex items-center gap-1">
+    <Calendar className="h-3 w-3" />
+    {formatDate(download.createdAt)}
+  </span>
+)}
               {download.category && (
                 <span className="rounded bg-white/10 px-2 py-1">
                   {download.category}
