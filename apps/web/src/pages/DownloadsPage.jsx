@@ -106,7 +106,7 @@ export default function DownloadsPage() {
   const handleDownload = async (download) => {
     try {
       // Track download (optional analytics)
-      await api.post(`/downloads/${download.id}/track`);
+      // await api.post(`/downloads/${download.id}/track`);
       
       // Trigger download
       const link = document.createElement('a');
