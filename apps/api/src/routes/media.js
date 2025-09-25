@@ -37,13 +37,24 @@ const upload = multer({
   limits: {
     fileSize: parseInt(process.env.MAX_FILE_SIZE) || 10 * 1024 * 1024 // 10MB
   },
-  fileFilter: (req, file, cb) => {
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf', 'video/mp4'];
-    if (allowedTypes.includes(file.mimetype)) {
-      cb(null, true);
-    } else {
-      cb(new Error('File type not allowed'), false);
-    }
+ fileFilter: (req, file, cb) => {
+  const allowedTypes = [
+    'image/jpeg', 
+    'image/jpg',     // Add this
+    'image/png', 
+    'image/gif', 
+    'image/webp',
+    'image/bmp',     // Add this if needed
+    'application/pdf', 
+    'video/mp4'
+  ];
+  const ext = file.originalname.toLowerCase().split('.').pop();
+  const allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'pdf', 'mp4'];
+   if (allowedTypes.includes(file.mimetype) || allowedExts.includes(ext)) {
+    cb(null, true);
+  } else {
+    cb(new Error('File type not allowed'), false);
+  }
   }
 });
 
@@ -123,7 +134,7 @@ mediaRouter.post('/upload', authenticate, requireRole('ADMIN', 'EDITOR'), upload
 
     const media = await mediaPrisma.media.create({
       data: {
-        url: `/uploads/${req.file.filename}`,
+        url: `${process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : ''}/uploads/${req.file.filename}`,
         fileName: req.file.originalname,
         type: fileType,
         alt: alt || req.file.originalname,
