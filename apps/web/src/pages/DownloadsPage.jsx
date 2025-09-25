@@ -110,8 +110,8 @@ export default function DownloadsPage() {
       
       // Trigger download
       const link = document.createElement('a');
-      link.href = download.fileurl;
-      link.download = download.filename || download.title;
+      link.href = download.fileUrl;  // ✅ Correct - capital U
+      link.download = download.fileName || download.title; 
       link.target = '_blank';
       document.body.appendChild(link);
       link.click();
@@ -119,7 +119,7 @@ export default function DownloadsPage() {
     } catch (error) {
       console.error('Download failed:', error);
       // Fallback: open in new window
-      window.open(download.fileurl, '_blank');
+      window.open(download.fileUrl, '_blank');
     }
   };
 
