@@ -41,8 +41,14 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
+      - name: List build files
+        run: |
+          ls -la imatrix-website/apps/web/dist/
+          echo "--- index.html content preview ---"
+          head -20 imatrix-website/apps/web/dist/index.html || echo "No index.html found"
+
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
           path: './imatrix-website/apps/web/dist'
 
@@ -55,4 +61,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v3
+        uses: actions/deploy-pages@v4
