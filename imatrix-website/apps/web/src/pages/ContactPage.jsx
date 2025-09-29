@@ -108,13 +108,13 @@ export default function ContactPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
         <div className="max-w-md w-full text-center">
-          <div className="card p-8">
-            <CheckCircle className="mx-auto h-16 w-16 text-green-400 mb-6" />
-            <h1 className="text-2xl font-bold text-white mb-4">Message Sent!</h1>
-            <p className="text-white/70 mb-6">
-              Thank you for contacting iMatrix Solutions. We'll get back to you 
+          <div className="card p-8 shadow-sm">
+            <CheckCircle className="mx-auto h-16 w-16 text-green-500 mb-6" />
+            <h1 className="text-2xl font-bold text-slate-800 mb-4">Message Sent!</h1>
+            <p className="text-slate-600 mb-6">
+              Thank you for contacting iMatrix Solutions. We'll get back to you
               within 24 hours with the information you requested.
             </p>
             <button
@@ -130,20 +130,20 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-slate-50">
       {/* Decorative background */}
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute top-1/4 left-1/3 h-[28rem] w-[28rem] rounded-full bg-cyan-500/10 blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/3 h-[20rem] w-[20rem] rounded-full bg-indigo-500/10 blur-3xl" />
+        <div className="absolute top-1/4 left-1/3 h-[28rem] w-[28rem] rounded-full bg-blue-100/60 blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/3 h-[20rem] w-[20rem] rounded-full bg-indigo-100/60 blur-3xl" />
       </div>
 
       <div className="mx-auto max-w-7xl px-4 py-12">
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold text-white sm:text-5xl mb-6">
+          <h1 className="text-4xl font-bold text-slate-800 sm:text-5xl mb-6">
             Get In Touch
           </h1>
-          <p className="max-w-3xl mx-auto text-lg text-white/70">
+          <p className="max-w-3xl mx-auto text-lg text-slate-600">
             Ready to enhance your organization's security? Our team of experts 
             is here to understand your needs and recommend the perfect solution.
           </p>
@@ -151,10 +151,10 @@ export default function ContactPage() {
 
         <div className="grid gap-12 lg:grid-cols-2">
           {/* Contact Form */}
-          <div className="card p-8">
+          <div className="card p-8 shadow-sm">
             <div className="mb-8">
-              <h2 className="text-2xl font-bold text-white mb-4">Send Us a Message</h2>
-              <p className="text-white/70">
+              <h2 className="text-2xl font-bold text-slate-800 mb-4">Send Us a Message</h2>
+              <p className="text-slate-600">
                 Fill out the form below and we'll get back to you with detailed 
                 information and pricing for your specific requirements.
               </p>
@@ -318,36 +318,36 @@ export default function ContactPage() {
           <div className="space-y-8">
             {/* Contact Methods */}
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-white">Contact Information</h2>
+              <h2 className="text-2xl font-bold text-slate-800">Contact Information</h2>
               
               {contactMethods.map((method) => {
                 const Icon = method.icon;
                 return (
-                  <div key={method.title} className="card p-6">
+                  <div key={method.title} className="card p-6 shadow-sm">
                     <div className="flex items-start gap-4">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-300 flex-shrink-0">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600 flex-shrink-0">
                         <Icon className="h-6 w-6" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-white mb-1">
+                        <h3 className="text-lg font-semibold text-slate-800 mb-1">
                           {method.title}
                         </h3>
-                        <p className="text-sm text-white/70 mb-2">
+                        <p className="text-sm text-slate-600 mb-2">
                           {method.description}
                         </p>
                         {method.action ? (
-                          <a 
+                          <a
                             href={method.action}
-                            className="text-cyan-300 hover:text-cyan-400 font-medium"
+                            className="text-blue-600 hover:text-blue-700 font-medium"
                           >
                             {method.value}
                           </a>
                         ) : (
-                          <span className="text-cyan-300 font-medium">
+                          <span className="text-blue-600 font-medium">
                             {method.value}
                           </span>
                         )}
-                        <div className="text-xs text-white/50 mt-1">
+                        <div className="text-xs text-slate-500 mt-1">
                           {method.available}
                         </div>
                       </div>
@@ -358,27 +358,27 @@ export default function ContactPage() {
             </div>
 
             {/* Business Hours */}
-            <div className="card p-6">
+            <div className="card p-6 shadow-sm">
               <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-300">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600">
                   <Clock className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-white mb-2">Business Hours</h3>
-                  <div className="space-y-1 text-sm text-white/70">
+                  <h3 className="text-lg font-semibold text-slate-800 mb-2">Business Hours</h3>
+                  <div className="space-y-1 text-sm text-slate-600">
                     <div className="flex justify-between gap-4">
                       <span>Monday - Friday:</span>
-                      <span className="text-cyan-300">8:30 AM - 5:30 PM</span>
+                      <span className="text-blue-600">8:30 AM - 5:30 PM</span>
                     </div>
                     <div className="flex justify-between gap-4">
                       <span>Saturday:</span>
-                      <span className="text-cyan-300">9:00 AM - 1:00 PM</span>
+                      <span className="text-blue-600">9:00 AM - 1:00 PM</span>
                     </div>
                     <div className="flex justify-between gap-4">
                       <span>Sunday:</span>
-                      <span className="text-white/50">Closed</span>
+                      <span className="text-slate-500">Closed</span>
                     </div>
-                    <div className="mt-2 text-xs text-white/50">
+                    <div className="mt-2 text-xs text-slate-500">
                       Emergency support available 24/7 for existing clients
                     </div>
                   </div>
@@ -388,7 +388,7 @@ export default function ContactPage() {
 
             {/* Quick Actions */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-white">Quick Actions</h3>
+              <h3 className="text-lg font-semibold text-slate-800">Quick Actions</h3>
               
               <div className="space-y-3">
                 <a 
@@ -425,8 +425,8 @@ export default function ContactPage() {
         {/* FAQ Section */}
         <div className="mt-16">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-bold text-white mb-4">Frequently Asked Questions</h2>
-            <p className="max-w-2xl mx-auto text-white/70">
+            <h2 className="text-2xl font-bold text-slate-800 mb-4">Frequently Asked Questions</h2>
+            <p className="max-w-2xl mx-auto text-slate-600">
               Common questions about our products, services, and implementation process.
             </p>
           </div>
@@ -450,9 +450,9 @@ export default function ContactPage() {
                 a: "Absolutely. Our solutions are designed to integrate with existing access control, HR systems, payroll software, and other business applications through standard APIs."
               }
             ].map((faq, index) => (
-              <div key={index} className="card p-6">
-                <h3 className="text-lg font-semibold text-white mb-3">{faq.q}</h3>
-                <p className="text-sm text-white/70">{faq.a}</p>
+              <div key={index} className="card p-6 shadow-sm">
+                <h3 className="text-lg font-semibold text-slate-800 mb-3">{faq.q}</h3>
+                <p className="text-sm text-slate-600">{faq.a}</p>
               </div>
             ))}
           </div>

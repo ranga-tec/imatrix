@@ -22,7 +22,7 @@ import AdminApp from './admin/AdminApp';
 
 function App() {
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-slate-50">
       <Routes>
         {/* Public routes with layout */}
         <Route path="/" element={<Layout />}>

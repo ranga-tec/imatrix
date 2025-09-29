@@ -71,8 +71,8 @@ export default function SolutionDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="flex items-center gap-2 text-white">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="flex items-center gap-2 text-slate-800">
           <Loader2 className="h-6 w-6 animate-spin" />
           <span>Loading solution...</span>
         </div>
@@ -102,27 +102,27 @@ export default function SolutionDetailPage() {
   }) : [];
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-slate-50">
       {/* Decorative background */}
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute top-1/4 right-1/4 h-[32rem] w-[32rem] rounded-full bg-cyan-500/10 blur-3xl" />
-        <div className="absolute bottom-1/4 left-1/4 h-[24rem] w-[24rem] rounded-full bg-indigo-500/10 blur-3xl" />
+        <div className="absolute top-1/4 right-1/4 h-[32rem] w-[32rem] rounded-full bg-blue-100/60 blur-3xl" />
+        <div className="absolute bottom-1/4 left-1/4 h-[24rem] w-[24rem] rounded-full bg-indigo-100/60 blur-3xl" />
       </div>
 
       <div className="mx-auto max-w-7xl px-4 py-8">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm text-white/70 mb-8">
-          <Link to="/" className="hover:text-white">Home</Link>
+        <nav className="flex items-center gap-2 text-sm text-slate-600 mb-8">
+          <Link to="/" className="hover:text-slate-800">Home</Link>
           <span>/</span>
-          <Link to="/solutions" className="hover:text-white">Solutions</Link>
+          <Link to="/solutions" className="hover:text-slate-800">Solutions</Link>
           <span>/</span>
-          <span className="text-white">{solution.name}</span>
+          <span className="text-slate-800">{solution.name}</span>
         </nav>
 
         {/* Back button */}
         <Link 
           to="/solutions" 
-          className="inline-flex items-center gap-2 text-sm text-cyan-300 hover:text-cyan-400 mb-6"
+          className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 mb-6"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Solutions
@@ -132,7 +132,7 @@ export default function SolutionDetailPage() {
         <div className="grid gap-8 lg:grid-cols-2 mb-12">
           {/* Images */}
           <div className="space-y-4">
-            <div className="relative aspect-video overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-slate-800 to-slate-700">
+            <div className="relative aspect-video overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-100 to-slate-200 shadow-sm">
               {currentImage ? (
                 <img 
                   src={currentImage.url} 
@@ -141,7 +141,7 @@ export default function SolutionDetailPage() {
                 />
               ) : (
                 <div className="flex h-full items-center justify-center">
-                  <Shield className="h-24 w-24 text-white/30" />
+                  <Shield className="h-24 w-24 text-slate-400" />
                 </div>
               )}
               
@@ -174,9 +174,9 @@ export default function SolutionDetailPage() {
                     key={index}
                     onClick={() => setActiveImageIndex(index)}
                     className={`flex-shrink-0 h-16 w-24 overflow-hidden rounded-lg border-2 ${
-                      index === activeImageIndex 
-                        ? 'border-cyan-400' 
-                        : 'border-white/20 hover:border-white/40'
+                      index === activeImageIndex
+                        ? 'border-blue-500'
+                        : 'border-slate-200 hover:border-slate-300'
                     }`}
                   >
                     <img 
@@ -193,10 +193,10 @@ export default function SolutionDetailPage() {
           {/* Solution Info */}
           <div className="space-y-6">
             <div>
-              <h1 className="text-3xl font-bold text-white sm:text-4xl">
+              <h1 className="text-3xl font-bold text-slate-800 sm:text-4xl">
                 {solution.name}
               </h1>
-              <p className="mt-4 text-lg text-white/70">
+              <p className="mt-4 text-lg text-slate-600">
                 {solution.description}
               </p>
             </div>
@@ -204,12 +204,12 @@ export default function SolutionDetailPage() {
             {/* Key Benefits */}
             {solution.benefits && solution.benefits.length > 0 && (
               <div className="space-y-3">
-                <h3 className="text-lg font-semibold text-white">Key Benefits</h3>
+                <h3 className="text-lg font-semibold text-slate-800">Key Benefits</h3>
                 <div className="space-y-2">
                   {solution.benefits.slice(0, 5).map((benefit, index) => (
                     <div key={index} className="flex items-start gap-2">
-                      <CheckCircle className="h-4 w-4 mt-0.5 text-cyan-300 flex-shrink-0" />
-                      <span className="text-sm text-white/80">{benefit}</span>
+                      <CheckCircle className="h-4 w-4 mt-0.5 text-blue-600 flex-shrink-0" />
+                      <span className="text-sm text-slate-700">{benefit}</span>
                     </div>
                   ))}
                 </div>
@@ -257,17 +257,17 @@ export default function SolutionDetailPage() {
         {/* Features */}
         {organizedFeatures.length > 0 && (
           <div className="mb-12">
-            <h2 className="text-2xl font-bold text-white mb-6">Solution Features</h2>
+            <h2 className="text-2xl font-bold text-slate-800 mb-6">Solution Features</h2>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {organizedFeatures.map((feature, index) => {
                 const Icon = FEATURE_ICONS[feature.icon] || Shield;
                 return (
-                  <div key={index} className="card p-4 flex items-start gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-500/10 flex-shrink-0">
-                      <Icon className="h-4 w-4 text-cyan-300" />
+                  <div key={index} className="card p-4 flex items-start gap-3 shadow-sm">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/10 flex-shrink-0">
+                      <Icon className="h-4 w-4 text-blue-600" />
                     </div>
                     <div>
-                      <span className="text-white/90 text-sm">{feature.text}</span>
+                      <span className="text-slate-800 text-sm">{feature.text}</span>
                     </div>
                   </div>
                 );
@@ -278,7 +278,7 @@ export default function SolutionDetailPage() {
 
         {/* Implementation Process */}
         <div className="mb-12">
-          <h2 className="text-2xl font-bold text-white mb-6">Implementation Process</h2>
+          <h2 className="text-2xl font-bold text-slate-800 mb-6">Implementation Process</h2>
           <div className="grid gap-6 md:grid-cols-4">
             {[
               { 
@@ -306,17 +306,17 @@ export default function SolutionDetailPage() {
                 duration: 'Ongoing'
               }
             ].map((phase) => (
-              <div key={phase.step} className="card p-6">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-500 text-slate-950 font-bold mb-4">
+              <div key={phase.step} className="card p-6 shadow-sm">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white font-bold mb-4">
                   {phase.step}
                 </div>
-                <h3 className="text-lg font-semibold text-white mb-2">
+                <h3 className="text-lg font-semibold text-slate-800 mb-2">
                   {phase.title}
                 </h3>
-                <p className="text-sm text-white/70 mb-3">
+                <p className="text-sm text-slate-600 mb-3">
                   {phase.description}
                 </p>
-                <div className="text-xs text-cyan-300 font-medium">
+                <div className="text-xs text-blue-600 font-medium">
                   Timeline: {phase.duration}
                 </div>
               </div>
@@ -328,10 +328,10 @@ export default function SolutionDetailPage() {
         {relatedProducts.length > 0 && (
           <div className="mb-12">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-white">Related Products</h2>
-              <Link 
-                to="/products" 
-                className="text-cyan-300 hover:text-cyan-400 text-sm font-medium inline-flex items-center gap-1"
+              <h2 className="text-2xl font-bold text-slate-800">Related Products</h2>
+              <Link
+                to="/products"
+                className="text-blue-600 hover:text-blue-700 text-sm font-medium inline-flex items-center gap-1"
               >
                 View all <ExternalLink className="h-4 w-4" />
               </Link>
@@ -342,7 +342,7 @@ export default function SolutionDetailPage() {
                 <Link
                   key={product.id}
                   to={`/products/${product.slug}`}
-                  className="card overflow-hidden hover:border-cyan-400/30 transition-all duration-300 group"
+                  className="card overflow-hidden hover:border-blue-400/50 transition-all duration-300 group shadow-sm"
                 >
                   <div className="relative">
                     {product.media?.[0] ? (
@@ -352,21 +352,21 @@ export default function SolutionDetailPage() {
                         className="h-32 w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]" 
                       />
                     ) : (
-                      <div className="h-32 w-full bg-gradient-to-br from-slate-800 to-slate-700 flex items-center justify-center">
-                        <Shield className="h-6 w-6 text-white/30" />
+                      <div className="h-32 w-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
+                        <Shield className="h-6 w-6 text-slate-400" />
                       </div>
                     )}
                     {product.featured && (
-                      <div className="absolute top-2 left-2 flex items-center gap-1 rounded bg-cyan-500 px-1.5 py-0.5 text-xs font-medium text-slate-950">
+                      <div className="absolute top-2 left-2 flex items-center gap-1 rounded bg-blue-600 px-1.5 py-0.5 text-xs font-medium text-white">
                         <Star className="h-3 w-3" fill="currentColor" />
                       </div>
                     )}
                   </div>
                   <div className="p-4">
-                    <h3 className="font-semibold text-white group-hover:text-cyan-300 transition-colors text-sm">
+                    <h3 className="font-semibold text-slate-800 group-hover:text-blue-600 transition-colors text-sm">
                       {product.name}
                     </h3>
-                    <p className="mt-1 text-xs text-white/70 line-clamp-2">
+                    <p className="mt-1 text-xs text-slate-600 line-clamp-2">
                       {product.summary}
                     </p>
                   </div>
@@ -377,12 +377,12 @@ export default function SolutionDetailPage() {
         )}
 
         {/* CTA Section */}
-        <div className="card-gradient p-8 text-center">
-          <h2 className="text-2xl font-bold text-white mb-4">
+        <div className="card-gradient p-8 text-center shadow-sm">
+          <h2 className="text-2xl font-bold text-slate-800 mb-4">
             Ready to Transform Your Security?
           </h2>
-          <p className="max-w-2xl mx-auto text-white/70 mb-6">
-            Our solution specialists will work with you to design and implement 
+          <p className="max-w-2xl mx-auto text-slate-600 mb-6">
+            Our solution specialists will work with you to design and implement
             the perfect security ecosystem for your organization.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

@@ -96,7 +96,7 @@ export default function SolutionsPage() {
   }, [api]);
 
   const SolutionCard = ({ solution }) => (
-    <div className="card overflow-hidden hover:border-cyan-400/30 transition-all duration-300 group">
+    <div className="card overflow-hidden hover:border-blue-400/50 transition-all duration-300 group shadow-sm">
       {solution.media?.[0] && (
         <div className="relative h-48 overflow-hidden">
           <img 
@@ -104,15 +104,15 @@ export default function SolutionsPage() {
             alt={solution.media[0].alt || solution.name}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]" 
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-800/60 to-transparent" />
         </div>
       )}
       
       <div className="p-6">
-        <h3 className="text-xl font-semibold text-white group-hover:text-cyan-300 transition-colors">
+        <h3 className="text-xl font-semibold text-slate-800 group-hover:text-blue-600 transition-colors">
           {solution.name}
         </h3>
-        <p className="mt-3 text-white/70">
+        <p className="mt-3 text-slate-600">
           {solution.description}
         </p>
         
@@ -120,8 +120,8 @@ export default function SolutionsPage() {
         {solution.benefits && solution.benefits.length > 0 && (
           <ul className="mt-4 space-y-2">
             {solution.benefits.slice(0, 3).map((benefit, index) => (
-              <li key={index} className="flex items-start gap-2 text-sm text-white/80">
-                <CheckCircle className="h-4 w-4 mt-0.5 text-cyan-300 flex-shrink-0" />
+              <li key={index} className="flex items-start gap-2 text-sm text-slate-700">
+                <CheckCircle className="h-4 w-4 mt-0.5 text-blue-600 flex-shrink-0" />
                 {benefit}
               </li>
             ))}
@@ -131,7 +131,7 @@ export default function SolutionsPage() {
         <div className="mt-6 flex items-center justify-between">
           <Link 
             to={`/solutions/${solution.slug}`}
-            className="inline-flex items-center gap-2 text-cyan-300 hover:text-cyan-400 font-medium"
+            className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium"
           >
             Learn More <ArrowRight className="h-4 w-4" />
           </Link>
@@ -147,34 +147,34 @@ export default function SolutionsPage() {
   );
 
   const LoadingSkeleton = () => (
-    <div className="card p-6 animate-pulse">
-      <div className="h-48 bg-white/10 rounded mb-4"></div>
-      <div className="h-6 bg-white/10 rounded mb-3"></div>
-      <div className="h-4 bg-white/10 rounded mb-2"></div>
-      <div className="h-4 bg-white/10 rounded mb-4 w-3/4"></div>
+    <div className="card p-6 animate-pulse shadow-sm">
+      <div className="h-48 bg-slate-200 rounded mb-4"></div>
+      <div className="h-6 bg-slate-200 rounded mb-3"></div>
+      <div className="h-4 bg-slate-200 rounded mb-2"></div>
+      <div className="h-4 bg-slate-200 rounded mb-4 w-3/4"></div>
       <div className="space-y-2">
-        <div className="h-4 bg-white/10 rounded"></div>
-        <div className="h-4 bg-white/10 rounded"></div>
-        <div className="h-4 bg-white/10 rounded w-2/3"></div>
+        <div className="h-4 bg-slate-200 rounded"></div>
+        <div className="h-4 bg-slate-200 rounded"></div>
+        <div className="h-4 bg-slate-200 rounded w-2/3"></div>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-slate-50">
       {/* Decorative background */}
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute top-1/3 left-1/3 h-[28rem] w-[28rem] rounded-full bg-cyan-500/10 blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/3 h-[20rem] w-[20rem] rounded-full bg-indigo-500/10 blur-3xl" />
+        <div className="absolute top-1/3 left-1/3 h-[28rem] w-[28rem] rounded-full bg-blue-100/60 blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/3 h-[20rem] w-[20rem] rounded-full bg-indigo-100/60 blur-3xl" />
       </div>
 
       <div className="mx-auto max-w-7xl px-4 py-12">
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold text-white sm:text-5xl mb-6">
+          <h1 className="text-4xl font-bold text-slate-800 sm:text-5xl mb-6">
             End-to-End Security Solutions
           </h1>
-          <p className="max-w-3xl mx-auto text-lg text-white/70 mb-8">
+          <p className="max-w-3xl mx-auto text-lg text-slate-600 mb-8">
             Comprehensive security ecosystems that integrate access control, 
             time attendance, and video surveillance into unified platforms. 
             Designed specifically for Sri Lankan businesses.
@@ -191,21 +191,21 @@ export default function SolutionsPage() {
 
         {/* Key Benefits */}
         <div className="mb-16">
-          <h2 className="text-2xl font-bold text-white text-center mb-8">
+          <h2 className="text-2xl font-bold text-slate-800 text-center mb-8">
             Why Choose iMatrix Solutions?
           </h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {benefits.map((benefit) => {
               const Icon = ICONS[benefit.icon] || Shield;
               return (
-                <div key={benefit.title} className="card p-6 text-center">
-                  <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/10">
-                    <Icon className="h-6 w-6 text-cyan-300" />
+                <div key={benefit.title} className="card p-6 text-center shadow-sm">
+                  <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10">
+                    <Icon className="h-6 w-6 text-blue-600" />
                   </div>
-                  <h3 className="text-lg font-semibold text-white mb-2">
+                  <h3 className="text-lg font-semibold text-slate-800 mb-2">
                     {benefit.title}
                   </h3>
-                  <p className="text-sm text-white/70">
+                  <p className="text-sm text-slate-600">
                     {benefit.description}
                   </p>
                 </div>
@@ -218,8 +218,8 @@ export default function SolutionsPage() {
         <div className="mb-16">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-2xl font-bold text-white">Our Solutions</h2>
-              <p className="text-white/70 mt-2">
+              <h2 className="text-2xl font-bold text-slate-800">Our Solutions</h2>
+              <p className="text-slate-600 mt-2">
                 Complete security ecosystems tailored to your industry needs
               </p>
             </div>
@@ -233,9 +233,9 @@ export default function SolutionsPage() {
             </div>
           ) : solutions.length === 0 ? (
             <div className="text-center py-12">
-              <Shield className="mx-auto h-12 w-12 text-white/30 mb-4" />
-              <h3 className="text-lg font-semibold text-white mb-2">No solutions available</h3>
-              <p className="text-white/70">
+              <Shield className="mx-auto h-12 w-12 text-slate-400 mb-4" />
+              <h3 className="text-lg font-semibold text-slate-800 mb-2">No solutions available</h3>
+              <p className="text-slate-600">
                 Solutions will appear here once they are added to the system.
               </p>
             </div>
@@ -251,10 +251,10 @@ export default function SolutionsPage() {
         {/* Industry Applications */}
         <div className="mb-16">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-bold text-white mb-4">
+            <h2 className="text-2xl font-bold text-slate-800 mb-4">
               Industry-Specific Applications
             </h2>
-            <p className="max-w-2xl mx-auto text-white/70">
+            <p className="max-w-2xl mx-auto text-slate-600">
               Our solutions are proven across diverse industries, 
               each with unique security and operational requirements.
             </p>
@@ -262,17 +262,17 @@ export default function SolutionsPage() {
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {industries.map((industry) => (
-              <div key={industry.name} className="card p-6">
-                <h3 className="text-lg font-semibold text-white mb-2">
+              <div key={industry.name} className="card p-6 shadow-sm">
+                <h3 className="text-lg font-semibold text-slate-800 mb-2">
                   {industry.name}
                 </h3>
-                <p className="text-white/70 mb-4 text-sm">
+                <p className="text-slate-600 mb-4 text-sm">
                   {industry.description}
                 </p>
                 <ul className="space-y-1">
                   {industry.features.map((feature, index) => (
-                    <li key={index} className="flex items-center gap-2 text-sm text-white/80">
-                      <CheckCircle className="h-3 w-3 text-cyan-300 flex-shrink-0" />
+                    <li key={index} className="flex items-center gap-2 text-sm text-slate-700">
+                      <CheckCircle className="h-3 w-3 text-blue-600 flex-shrink-0" />
                       {feature}
                     </li>
                   ))}
@@ -285,10 +285,10 @@ export default function SolutionsPage() {
         {/* Implementation Process */}
         <div className="mb-16">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-bold text-white mb-4">
+            <h2 className="text-2xl font-bold text-slate-800 mb-4">
               Our Implementation Process
             </h2>
-            <p className="max-w-2xl mx-auto text-white/70">
+            <p className="max-w-2xl mx-auto text-slate-600">
               From initial consultation to ongoing support, we ensure 
               smooth deployment and optimal performance.
             </p>
@@ -318,13 +318,13 @@ export default function SolutionsPage() {
               }
             ].map((phase) => (
               <div key={phase.step} className="text-center">
-                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border-2 border-cyan-400 bg-cyan-500/10">
-                  <span className="text-xl font-bold text-cyan-300">{phase.step}</span>
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border-2 border-blue-500 bg-blue-500/10">
+                  <span className="text-xl font-bold text-blue-600">{phase.step}</span>
                 </div>
-                <h3 className="text-lg font-semibold text-white mb-2">
+                <h3 className="text-lg font-semibold text-slate-800 mb-2">
                   {phase.title}
                 </h3>
-                <p className="text-sm text-white/70">
+                <p className="text-sm text-slate-600">
                   {phase.description}
                 </p>
               </div>
@@ -333,11 +333,11 @@ export default function SolutionsPage() {
         </div>
 
         {/* CTA Section */}
-        <div className="card-gradient p-8 text-center">
-          <h2 className="text-2xl font-bold text-white mb-4">
+        <div className="card-gradient p-8 text-center shadow-sm">
+          <h2 className="text-2xl font-bold text-slate-800 mb-4">
             Ready to Secure Your Organization?
           </h2>
-          <p className="max-w-2xl mx-auto text-white/70 mb-8">
+          <p className="max-w-2xl mx-auto text-slate-600 mb-8">
             Let our security experts design a comprehensive solution 
             tailored to your specific needs and budget. Get started 
             with a free consultation and site assessment.
@@ -355,17 +355,17 @@ export default function SolutionsPage() {
             </a>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-3 text-center text-sm text-white/70">
+          <div className="grid gap-4 sm:grid-cols-3 text-center text-sm text-slate-600">
             <div>
-              <div className="font-semibold text-cyan-300">15+ Years</div>
+              <div className="font-semibold text-blue-600">15+ Years</div>
               <div>Industry Experience</div>
             </div>
             <div>
-              <div className="font-semibold text-cyan-300">500+ Sites</div>
+              <div className="font-semibold text-blue-600">500+ Sites</div>
               <div>Successfully Deployed</div>
             </div>
             <div>
-              <div className="font-semibold text-cyan-300">24/7 Support</div>
+              <div className="font-semibold text-blue-600">24/7 Support</div>
               <div>Local Technical Team</div>
             </div>
           </div>

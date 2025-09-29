@@ -67,7 +67,7 @@ export default function ProductsPage() {
   }, [products, searchTerm, selectedCategory]);
 
   const ProductCard = ({ product }) => (
-    <div className="group card overflow-hidden hover:border-cyan-400/30 transition-all duration-300">
+    <div className="group card overflow-hidden hover:border-blue-400/50 transition-all duration-300 shadow-sm hover:shadow-md">
       <div className="relative">
         {product.media?.[0] ? (
           <img 
@@ -76,36 +76,36 @@ export default function ProductsPage() {
             className="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]" 
           />
         ) : (
-          <div className="h-48 w-full bg-gradient-to-br from-slate-800 to-slate-700 flex items-center justify-center">
-            <Cpu className="h-12 w-12 text-white/30" />
+          <div className="h-48 w-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
+            <Cpu className="h-12 w-12 text-slate-400" />
           </div>
         )}
         
         {/* Featured badge */}
         {product.featured && (
-          <div className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-cyan-500 px-2 py-1 text-xs font-medium text-slate-950">
+          <div className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-blue-600 px-2 py-1 text-xs font-medium text-white">
             <Star className="h-3 w-3" fill="currentColor" />
             Featured
           </div>
         )}
         
         {/* Stock status */}
-        <div className="absolute right-3 top-3 rounded-full bg-black/50 px-2 py-1 text-xs text-white/80">
+        <div className="absolute right-3 top-3 rounded-full bg-green-500 px-2 py-1 text-xs text-white">
           In Stock
         </div>
       </div>
       
       <div className="p-6">
-        <h3 className="text-lg font-semibold text-white group-hover:text-cyan-300 transition-colors">
+        <h3 className="text-lg font-semibold text-slate-800 group-hover:text-blue-600 transition-colors">
           {product.name}
         </h3>
-        <p className="mt-2 text-sm text-white/70 line-clamp-2">
+        <p className="mt-2 text-sm text-slate-600 line-clamp-2">
           {product.summary}
         </p>
         
         {/* Price */}
         {product.price && (
-          <div className="mt-3 text-cyan-300 font-semibold">
+          <div className="mt-3 text-blue-600 font-semibold">
             Contact for pricing
           </div>
         )}
@@ -113,13 +113,13 @@ export default function ProductsPage() {
         <div className="mt-4 flex items-center justify-between">
           <Link 
             to={`/products/${product.slug}`} 
-            className="inline-flex items-center gap-2 text-sm font-semibold text-cyan-300 hover:text-cyan-400"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700"
           >
             Learn More <ChevronRight className="h-4 w-4" />
           </Link>
           <Link 
             to="/downloads" 
-            className="inline-flex items-center gap-2 text-sm text-white/70 hover:text-white"
+            className="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-800"
           >
             <Download className="h-4 w-4" />
             Datasheet
@@ -130,33 +130,33 @@ export default function ProductsPage() {
   );
 
   const LoadingSkeleton = () => (
-    <div className="card p-6 animate-pulse">
-      <div className="h-48 bg-white/10 rounded mb-4"></div>
-      <div className="h-6 bg-white/10 rounded mb-2"></div>
-      <div className="h-4 bg-white/10 rounded mb-1"></div>
-      <div className="h-4 bg-white/10 rounded w-3/4"></div>
+    <div className="card p-6 animate-pulse shadow-sm">
+      <div className="h-48 bg-slate-200 rounded mb-4"></div>
+      <div className="h-6 bg-slate-200 rounded mb-2"></div>
+      <div className="h-4 bg-slate-200 rounded mb-1"></div>
+      <div className="h-4 bg-slate-200 rounded w-3/4"></div>
       <div className="mt-4 flex justify-between">
-        <div className="h-4 bg-white/10 rounded w-20"></div>
-        <div className="h-4 bg-white/10 rounded w-16"></div>
+        <div className="h-4 bg-slate-200 rounded w-20"></div>
+        <div className="h-4 bg-slate-200 rounded w-16"></div>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-slate-50">
       {/* Decorative background */}
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 h-[20rem] w-[20rem] rounded-full bg-cyan-500/10 blur-3xl" />
-        <div className="absolute top-3/4 right-1/4 h-[16rem] w-[16rem] rounded-full bg-indigo-500/10 blur-3xl" />
+        <div className="absolute top-1/4 left-1/4 h-[20rem] w-[20rem] rounded-full bg-blue-100/60 blur-3xl" />
+        <div className="absolute top-3/4 right-1/4 h-[16rem] w-[16rem] rounded-full bg-indigo-100/60 blur-3xl" />
       </div>
 
       <div className="mx-auto max-w-7xl px-4 py-12">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white sm:text-4xl">
+          <h1 className="text-3xl font-bold text-slate-800 sm:text-4xl">
             Enterprise Security Products
           </h1>
-          <p className="mt-4 max-w-3xl text-lg text-white/70">
+          <p className="mt-4 max-w-3xl text-lg text-slate-600">
             Professional-grade access control, biometric, and surveillance solutions 
             designed for Sri Lankan businesses. From single-door installations to 
             enterprise-wide deployments.
@@ -168,7 +168,7 @@ export default function ProductsPage() {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             {/* Search */}
             <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/50" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
               <input
                 type="text"
                 placeholder="Search products..."
@@ -188,7 +188,7 @@ export default function ProductsPage() {
             </button>
 
             {/* Results count */}
-            <div className="text-sm text-white/70">
+            <div className="text-sm text-slate-600">
               {loading ? 'Loading...' : `${filteredProducts.length} products`}
             </div>
           </div>
@@ -202,8 +202,8 @@ export default function ProductsPage() {
                   onClick={() => setSelectedCategory(category.id)}
                   className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                     selectedCategory === category.id
-                      ? 'bg-cyan-500 text-slate-950'
-                      : 'bg-white/5 text-white/80 hover:bg-white/10 hover:text-white'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-800 border border-slate-200'
                   }`}
                 >
                   {category.name}
@@ -222,9 +222,9 @@ export default function ProductsPage() {
           </div>
         ) : filteredProducts.length === 0 ? (
           <div className="text-center py-12">
-            <Cpu className="mx-auto h-12 w-12 text-white/30 mb-4" />
-            <h3 className="text-lg font-semibold text-white mb-2">No products found</h3>
-            <p className="text-white/70 mb-6">
+            <Cpu className="mx-auto h-12 w-12 text-slate-400 mb-4" />
+            <h3 className="text-lg font-semibold text-slate-800 mb-2">No products found</h3>
+            <p className="text-slate-600 mb-6">
               {searchTerm || selectedCategory !== 'all'
                 ? 'Try adjusting your search or filters'
                 : 'Products will appear here once they are added'
@@ -251,11 +251,11 @@ export default function ProductsPage() {
         )}
 
         {/* CTA Section */}
-        <div className="mt-16 card-gradient p-8 text-center">
-          <h2 className="text-2xl font-bold text-white mb-4">
+        <div className="mt-16 card-gradient p-8 text-center shadow-sm">
+          <h2 className="text-2xl font-bold text-slate-800 mb-4">
             Need Help Choosing the Right Solution?
           </h2>
-          <p className="text-white/70 mb-6 max-w-2xl mx-auto">
+          <p className="text-slate-600 mb-6 max-w-2xl mx-auto">
             Our technical team can help you select the perfect products for your 
             specific requirements. Get expert guidance and custom quotes.
           </p>

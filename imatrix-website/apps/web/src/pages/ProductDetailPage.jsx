@@ -64,8 +64,8 @@ export default function ProductDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="flex items-center gap-2 text-white">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="flex items-center gap-2 text-slate-800">
           <Loader2 className="h-6 w-6 animate-spin" />
           <span>Loading product...</span>
         </div>
@@ -81,26 +81,26 @@ export default function ProductDetailPage() {
   const currentImage = images[activeImageIndex];
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-slate-50">
       {/* Decorative background */}
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute top-1/4 right-1/4 h-[24rem] w-[24rem] rounded-full bg-cyan-500/10 blur-3xl" />
+        <div className="absolute top-1/4 right-1/4 h-[24rem] w-[24rem] rounded-full bg-blue-100/60 blur-3xl" />
       </div>
 
       <div className="mx-auto max-w-7xl px-4 py-8">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm text-white/70 mb-8">
-          <Link to="/" className="hover:text-white">Home</Link>
+        <nav className="flex items-center gap-2 text-sm text-slate-600 mb-8">
+          <Link to="/" className="hover:text-slate-800">Home</Link>
           <span>/</span>
-          <Link to="/products" className="hover:text-white">Products</Link>
+          <Link to="/products" className="hover:text-slate-800">Products</Link>
           <span>/</span>
-          <span className="text-white">{product.name}</span>
+          <span className="text-slate-800">{product.name}</span>
         </nav>
 
         {/* Back button */}
         <Link 
           to="/products" 
-          className="inline-flex items-center gap-2 text-sm text-cyan-300 hover:text-cyan-400 mb-6"
+          className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 mb-6"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Products
@@ -110,7 +110,7 @@ export default function ProductDetailPage() {
           {/* Images */}
           <div className="space-y-4">
             {/* Main image */}
-            <div className="relative aspect-square overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-slate-800 to-slate-700">
+            <div className="relative aspect-square overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-100 to-slate-200 shadow-sm">
               {currentImage ? (
                 <img 
                   src={currentImage.url} 
@@ -119,13 +119,13 @@ export default function ProductDetailPage() {
                 />
               ) : (
                 <div className="flex h-full items-center justify-center">
-                  <Cpu className="h-24 w-24 text-white/30" />
+                  <Cpu className="h-24 w-24 text-slate-400" />
                 </div>
               )}
               
               {/* Featured badge */}
               {product.featured && (
-                <div className="absolute left-4 top-4 flex items-center gap-1 rounded-full bg-cyan-500 px-3 py-1 text-sm font-medium text-slate-950">
+                <div className="absolute left-4 top-4 flex items-center gap-1 rounded-full bg-blue-600 px-3 py-1 text-sm font-medium text-white">
                   <Star className="h-4 w-4" fill="currentColor" />
                   Featured
                 </div>
@@ -160,9 +160,9 @@ export default function ProductDetailPage() {
                     key={index}
                     onClick={() => setActiveImageIndex(index)}
                     className={`flex-shrink-0 h-16 w-16 overflow-hidden rounded-lg border-2 ${
-                      index === activeImageIndex 
-                        ? 'border-cyan-400' 
-                        : 'border-white/20 hover:border-white/40'
+                      index === activeImageIndex
+                        ? 'border-blue-500'
+                        : 'border-slate-200 hover:border-slate-300'
                     }`}
                   >
                     <img 
@@ -179,21 +179,21 @@ export default function ProductDetailPage() {
           {/* Product Info */}
           <div className="space-y-6">
             <div>
-              <h1 className="text-3xl font-bold text-white sm:text-4xl">
+              <h1 className="text-3xl font-bold text-slate-800 sm:text-4xl">
                 {product.name}
               </h1>
-              <p className="mt-4 text-lg text-white/70">
+              <p className="mt-4 text-lg text-slate-600">
                 {product.summary}
               </p>
             </div>
 
             {/* Price */}
-            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-              <div className="text-sm text-white/70">Price</div>
-              <div className="text-xl font-semibold text-cyan-300">
+            <div className="rounded-xl border border-slate-200 bg-slate-100 p-4">
+              <div className="text-sm text-slate-600">Price</div>
+              <div className="text-xl font-semibold text-blue-600">
                 Contact for Quote
               </div>
-              <div className="mt-2 text-xs text-white/50">
+              <div className="mt-2 text-xs text-slate-500">
                 Pricing varies based on configuration and quantity
               </div>
             </div>
@@ -201,12 +201,12 @@ export default function ProductDetailPage() {
             {/* Key Features */}
             {product.specs && (
               <div className="space-y-3">
-                <h3 className="text-lg font-semibold text-white">Key Features</h3>
+                <h3 className="text-lg font-semibold text-slate-800">Key Features</h3>
                 <div className="grid gap-2">
                   {Object.entries(product.specs).slice(0, 5).map(([key, value]) => (
                     <div key={key} className="flex items-start gap-2">
-                      <CheckCircle className="h-4 w-4 mt-0.5 text-cyan-300 flex-shrink-0" />
-                      <span className="text-sm text-white/80">
+                      <CheckCircle className="h-4 w-4 mt-0.5 text-blue-600 flex-shrink-0" />
+                      <span className="text-sm text-slate-700">
                         <span className="font-medium">{key}:</span> {value}
                       </span>
                     </div>
@@ -264,10 +264,10 @@ export default function ProductDetailPage() {
         {/* Description */}
         {product.description && (
           <div className="mt-12">
-            <h2 className="text-2xl font-bold text-white mb-6">Description</h2>
-            <div className="card p-6">
-              <div 
-                className="prose prose-invert max-w-none text-white/80"
+            <h2 className="text-2xl font-bold text-slate-800 mb-6">Description</h2>
+            <div className="card p-6 shadow-sm">
+              <div
+                className="prose max-w-none text-slate-700"
                 dangerouslySetInnerHTML={{ __html: product.description }}
               />
             </div>
@@ -277,13 +277,13 @@ export default function ProductDetailPage() {
         {/* Specifications */}
         {product.specs && Object.keys(product.specs).length > 0 && (
           <div className="mt-12">
-            <h2 className="text-2xl font-bold text-white mb-6">Specifications</h2>
-            <div className="card overflow-hidden">
-              <div className="divide-y divide-white/10">
+            <h2 className="text-2xl font-bold text-slate-800 mb-6">Specifications</h2>
+            <div className="card overflow-hidden shadow-sm">
+              <div className="divide-y divide-slate-200">
                 {Object.entries(product.specs).map(([key, value]) => (
                   <div key={key} className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4">
-                    <div className="font-medium text-white/90">{key}</div>
-                    <div className="sm:col-span-2 text-white/70">{value}</div>
+                    <div className="font-medium text-slate-800">{key}</div>
+                    <div className="sm:col-span-2 text-slate-600">{value}</div>
                   </div>
                 ))}
               </div>
@@ -295,10 +295,10 @@ export default function ProductDetailPage() {
         {relatedProducts.length > 0 && (
           <div className="mt-16">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-white">Related Products</h2>
-              <Link 
-                to="/products" 
-                className="text-cyan-300 hover:text-cyan-400 text-sm font-medium"
+              <h2 className="text-2xl font-bold text-slate-800">Related Products</h2>
+              <Link
+                to="/products"
+                className="text-blue-600 hover:text-blue-700 text-sm font-medium"
               >
                 View all products
               </Link>
@@ -309,26 +309,26 @@ export default function ProductDetailPage() {
                 <Link
                   key={relatedProduct.id}
                   to={`/products/${relatedProduct.slug}`}
-                  className="card overflow-hidden hover:border-cyan-400/30 transition-all duration-300 group"
+                  className="card overflow-hidden hover:border-blue-400/50 transition-all duration-300 group shadow-sm"
                 >
                   <div className="relative">
                     {relatedProduct.media?.[0] ? (
-                      <img 
-                        src={relatedProduct.media[0].url} 
+                      <img
+                        src={relatedProduct.media[0].url}
                         alt={relatedProduct.media[0].alt || relatedProduct.name}
-                        className="h-40 w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]" 
+                        className="h-40 w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                       />
                     ) : (
-                      <div className="h-40 w-full bg-gradient-to-br from-slate-800 to-slate-700 flex items-center justify-center">
-                        <Cpu className="h-8 w-8 text-white/30" />
+                      <div className="h-40 w-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
+                        <Cpu className="h-8 w-8 text-slate-400" />
                       </div>
                     )}
                   </div>
                   <div className="p-4">
-                    <h3 className="font-semibold text-white group-hover:text-cyan-300 transition-colors">
+                    <h3 className="font-semibold text-slate-800 group-hover:text-blue-600 transition-colors">
                       {relatedProduct.name}
                     </h3>
-                    <p className="mt-1 text-sm text-white/70 line-clamp-2">
+                    <p className="mt-1 text-sm text-slate-600 line-clamp-2">
                       {relatedProduct.summary}
                     </p>
                   </div>

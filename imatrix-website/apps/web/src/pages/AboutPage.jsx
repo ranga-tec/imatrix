@@ -105,20 +105,20 @@ const certifications = [
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-slate-50">
       {/* Decorative background */}
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute top-1/4 right-1/3 h-[32rem] w-[32rem] rounded-full bg-cyan-500/10 blur-3xl" />
-        <div className="absolute bottom-1/3 left-1/4 h-[24rem] w-[24rem] rounded-full bg-indigo-500/10 blur-3xl" />
+        <div className="absolute top-1/4 right-1/3 h-[32rem] w-[32rem] rounded-full bg-blue-100/60 blur-3xl" />
+        <div className="absolute bottom-1/3 left-1/4 h-[24rem] w-[24rem] rounded-full bg-indigo-100/60 blur-3xl" />
       </div>
 
       {/* Hero Section */}
       <section className="mx-auto max-w-7xl px-4 py-16">
         <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold text-white sm:text-5xl mb-6">
+          <h1 className="text-4xl font-bold text-slate-800 sm:text-5xl mb-6">
             About iMatrix Solutions
           </h1>
-          <p className="max-w-3xl mx-auto text-lg text-white/70 mb-8">
+          <p className="max-w-3xl mx-auto text-lg text-slate-600 mb-8">
             For over 15 years, we've been Sri Lanka's trusted partner in enterprise 
             security solutions. From biometric access control to comprehensive surveillance 
             systems, we secure what matters most to your business.
@@ -138,12 +138,12 @@ export default function AboutPage() {
           {stats.map((stat) => {
             const Icon = stat.icon;
             return (
-              <div key={stat.label} className="card p-6 text-center">
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/10">
-                  <Icon className="h-6 w-6 text-cyan-300" />
+              <div key={stat.label} className="card p-6 text-center shadow-sm">
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10">
+                  <Icon className="h-6 w-6 text-blue-600" />
                 </div>
-                <div className="text-2xl font-bold text-white mb-1">{stat.value}</div>
-                <div className="text-sm text-white/70">{stat.label}</div>
+                <div className="text-2xl font-bold text-slate-800 mb-1">{stat.value}</div>
+                <div className="text-sm text-slate-600">{stat.label}</div>
               </div>
             );
           })}
@@ -153,24 +153,24 @@ export default function AboutPage() {
       {/* Mission & Vision */}
       <section className="mx-auto max-w-7xl px-4 py-16">
         <div className="grid gap-12 lg:grid-cols-2">
-          <div className="card p-8">
+          <div className="card p-8 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
-              <Target className="h-8 w-8 text-cyan-300" />
-              <h2 className="text-2xl font-bold text-white">Our Mission</h2>
+              <Target className="h-8 w-8 text-blue-600" />
+              <h2 className="text-2xl font-bold text-slate-800">Our Mission</h2>
             </div>
-            <p className="text-white/80 leading-relaxed">
+            <p className="text-slate-700 leading-relaxed">
               To empower Sri Lankan businesses with world-class security solutions 
               that protect people, assets, and operations while enabling growth and 
               efficiency. We believe security should enhance, not hinder, business operations.
             </p>
           </div>
 
-          <div className="card p-8">
+          <div className="card p-8 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
-              <Eye className="h-8 w-8 text-cyan-300" />
-              <h2 className="text-2xl font-bold text-white">Our Vision</h2>
+              <Eye className="h-8 w-8 text-blue-600" />
+              <h2 className="text-2xl font-bold text-slate-800">Our Vision</h2>
             </div>
-            <p className="text-white/80 leading-relaxed">
+            <p className="text-slate-700 leading-relaxed">
               To be the leading security solutions provider in Sri Lanka, known for 
               innovation, reliability, and exceptional customer service. We envision 
               a future where advanced security technology is accessible to all businesses.
@@ -182,8 +182,8 @@ export default function AboutPage() {
       {/* Values */}
       <section className="mx-auto max-w-7xl px-4 py-16">
         <div className="text-center mb-12">
-          <h2 className="text-2xl font-bold text-white mb-4">Our Core Values</h2>
-          <p className="max-w-2xl mx-auto text-white/70">
+          <h2 className="text-2xl font-bold text-slate-800 mb-4">Our Core Values</h2>
+          <p className="max-w-2xl mx-auto text-slate-600">
             These principles guide everything we do, from product development 
             to customer service.
           </p>
@@ -193,14 +193,14 @@ export default function AboutPage() {
           {values.map((value) => {
             const Icon = value.icon;
             return (
-              <div key={value.title} className="card p-6 text-center">
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/10">
-                  <Icon className="h-6 w-6 text-cyan-300" />
+              <div key={value.title} className="card p-6 text-center shadow-sm">
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10">
+                  <Icon className="h-6 w-6 text-blue-600" />
                 </div>
-                <h3 className="text-lg font-semibold text-white mb-3">
+                <h3 className="text-lg font-semibold text-slate-800 mb-3">
                   {value.title}
                 </h3>
-                <p className="text-sm text-white/70">
+                <p className="text-sm text-slate-600">
                   {value.description}
                 </p>
               </div>
@@ -212,8 +212,8 @@ export default function AboutPage() {
       {/* Timeline */}
       <section className="mx-auto max-w-7xl px-4 py-16">
         <div className="text-center mb-12">
-          <h2 className="text-2xl font-bold text-white mb-4">Our Journey</h2>
-          <p className="max-w-2xl mx-auto text-white/70">
+          <h2 className="text-2xl font-bold text-slate-800 mb-4">Our Journey</h2>
+          <p className="max-w-2xl mx-auto text-slate-600">
             From humble beginnings to industry leadership, here are the key 
             milestones that shaped iMatrix Solutions.
           </p>
@@ -223,19 +223,19 @@ export default function AboutPage() {
           {milestones.map((milestone, index) => (
             <div key={milestone.year} className="flex gap-6">
               <div className="flex flex-col items-center">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-cyan-500 text-slate-950 font-bold">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-white font-bold">
                   {index + 1}
                 </div>
                 {index !== milestones.length - 1 && (
-                  <div className="mt-4 h-16 w-0.5 bg-white/20"></div>
+                  <div className="mt-4 h-16 w-0.5 bg-slate-200"></div>
                 )}
               </div>
-              <div className="card p-6 flex-1">
+              <div className="card p-6 flex-1 shadow-sm">
                 <div className="flex items-center gap-3 mb-2">
-                  <span className="text-cyan-300 font-bold">{milestone.year}</span>
-                  <h3 className="text-lg font-semibold text-white">{milestone.title}</h3>
+                  <span className="text-blue-600 font-bold">{milestone.year}</span>
+                  <h3 className="text-lg font-semibold text-slate-800">{milestone.title}</h3>
                 </div>
-                <p className="text-white/70">{milestone.description}</p>
+                <p className="text-slate-600">{milestone.description}</p>
               </div>
             </div>
           ))}
@@ -245,8 +245,8 @@ export default function AboutPage() {
       {/* Team */}
       <section className="mx-auto max-w-7xl px-4 py-16">
         <div className="text-center mb-12">
-          <h2 className="text-2xl font-bold text-white mb-4">Leadership Team</h2>
-          <p className="max-w-2xl mx-auto text-white/70">
+          <h2 className="text-2xl font-bold text-slate-800 mb-4">Leadership Team</h2>
+          <p className="max-w-2xl mx-auto text-slate-600">
             Meet the experienced professionals who lead iMatrix Solutions 
             and drive our commitment to excellence.
           </p>
@@ -254,18 +254,18 @@ export default function AboutPage() {
 
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {team.map((member) => (
-            <div key={member.name} className="card overflow-hidden">
-              <img 
-                src={member.image} 
+            <div key={member.name} className="card overflow-hidden shadow-sm">
+              <img
+                src={member.image}
                 alt={member.name}
                 className="h-48 w-full object-cover"
               />
               <div className="p-6">
-                <h3 className="text-lg font-semibold text-white mb-1">
+                <h3 className="text-lg font-semibold text-slate-800 mb-1">
                   {member.name}
                 </h3>
-                <p className="text-cyan-300 text-sm mb-3">{member.role}</p>
-                <p className="text-xs text-white/70">{member.bio}</p>
+                <p className="text-blue-600 text-sm mb-3">{member.role}</p>
+                <p className="text-xs text-slate-600">{member.bio}</p>
               </div>
             </div>
           ))}
@@ -276,11 +276,11 @@ export default function AboutPage() {
       <section className="mx-auto max-w-7xl px-4 py-16">
         <div className="card-gradient p-8">
           <div className="text-center mb-8">
-            <Award className="mx-auto h-12 w-12 text-cyan-300 mb-4" />
-            <h2 className="text-2xl font-bold text-white mb-4">
+            <Award className="mx-auto h-12 w-12 text-blue-600 mb-4" />
+            <h2 className="text-2xl font-bold text-slate-800 mb-4">
               Certifications & Standards
             </h2>
-            <p className="max-w-2xl mx-auto text-white/70">
+            <p className="max-w-2xl mx-auto text-slate-600">
               Our commitment to quality is backed by international certifications 
               and compliance with industry standards.
             </p>
@@ -288,9 +288,9 @@ export default function AboutPage() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             {certifications.map((cert) => (
-              <div key={cert} className="flex items-center gap-3 bg-white/5 rounded-lg p-4">
-                <CheckCircle className="h-5 w-5 text-cyan-300 flex-shrink-0" />
-                <span className="text-white/90 text-sm">{cert}</span>
+              <div key={cert} className="flex items-center gap-3 bg-slate-100 rounded-lg p-4">
+                <CheckCircle className="h-5 w-5 text-blue-600 flex-shrink-0" />
+                <span className="text-slate-700 text-sm">{cert}</span>
               </div>
             ))}
           </div>
@@ -300,43 +300,43 @@ export default function AboutPage() {
       {/* Contact Info */}
       <section className="mx-auto max-w-7xl px-4 py-16">
         <div className="text-center mb-12">
-          <h2 className="text-2xl font-bold text-white mb-4">Get In Touch</h2>
-          <p className="max-w-2xl mx-auto text-white/70 mb-8">
+          <h2 className="text-2xl font-bold text-slate-800 mb-4">Get In Touch</h2>
+          <p className="max-w-2xl mx-auto text-slate-600 mb-8">
             Ready to discuss your security needs? Our team is here to help you 
             find the perfect solution for your organization.
           </p>
         </div>
 
         <div className="grid gap-8 md:grid-cols-3">
-          <div className="card p-6 text-center">
-            <Phone className="mx-auto h-8 w-8 text-cyan-300 mb-4" />
-            <h3 className="text-lg font-semibold text-white mb-2">Call Us</h3>
-            <p className="text-white/70 mb-3">Speak with our sales team</p>
-            <a 
-              href="tel:+94112345678" 
-              className="text-cyan-300 hover:text-cyan-400 font-medium"
+          <div className="card p-6 text-center shadow-sm">
+            <Phone className="mx-auto h-8 w-8 text-blue-600 mb-4" />
+            <h3 className="text-lg font-semibold text-slate-800 mb-2">Call Us</h3>
+            <p className="text-slate-600 mb-3">Speak with our sales team</p>
+            <a
+              href="tel:+94112345678"
+              className="text-blue-600 hover:text-blue-700 font-medium"
             >
               +94 11 234 5678
             </a>
           </div>
 
-          <div className="card p-6 text-center">
-            <Mail className="mx-auto h-8 w-8 text-cyan-300 mb-4" />
-            <h3 className="text-lg font-semibold text-white mb-2">Email Us</h3>
-            <p className="text-white/70 mb-3">Get detailed information</p>
-            <a 
-              href="mailto:info@imatrix.lk" 
-              className="text-cyan-300 hover:text-cyan-400 font-medium"
+          <div className="card p-6 text-center shadow-sm">
+            <Mail className="mx-auto h-8 w-8 text-blue-600 mb-4" />
+            <h3 className="text-lg font-semibold text-slate-800 mb-2">Email Us</h3>
+            <p className="text-slate-600 mb-3">Get detailed information</p>
+            <a
+              href="mailto:info@imatrix.lk"
+              className="text-blue-600 hover:text-blue-700 font-medium"
             >
               info@imatrix.lk
             </a>
           </div>
 
-          <div className="card p-6 text-center">
-            <MapPin className="mx-auto h-8 w-8 text-cyan-300 mb-4" />
-            <h3 className="text-lg font-semibold text-white mb-2">Visit Us</h3>
-            <p className="text-white/70 mb-3">Schedule an appointment</p>
-            <p className="text-cyan-300 font-medium">Colombo, Sri Lanka</p>
+          <div className="card p-6 text-center shadow-sm">
+            <MapPin className="mx-auto h-8 w-8 text-blue-600 mb-4" />
+            <h3 className="text-lg font-semibold text-slate-800 mb-2">Visit Us</h3>
+            <p className="text-slate-600 mb-3">Schedule an appointment</p>
+            <p className="text-blue-600 font-medium">Colombo, Sri Lanka</p>
           </div>
         </div>
 
