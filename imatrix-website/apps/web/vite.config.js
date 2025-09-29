@@ -6,11 +6,11 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  // Remove this line: base: '/imatrix/',
+  base: '/imatrix/',
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'https://web-production-5822f.up.railway.app',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }
