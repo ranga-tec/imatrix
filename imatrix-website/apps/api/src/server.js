@@ -1,5 +1,5 @@
 // ===============================
-// COMPLETE SERVER.JS WITH FIXED STATIC FILE SERVING
+// COMPLETE SERVER.JS WITH FIXED CORS
 // ===============================
 // apps/api/src/server.js
 
@@ -40,8 +40,10 @@ const logger = pino({
 });
 
 const app = express();
+
 // Trust proxy for Railway
 app.set('trust proxy', true);
+
 const PORT = process.env.PORT || 8080;
 
 // Security middleware
@@ -50,69 +52,118 @@ app.use(helmet({
 }));
 
 // ===============================
-// CORS CONFIGURATION
+// ENHANCED CORS CONFIGURATION
 // ===============================
 
-// Regex to allow any Netlify deploy-preview for this site:
-// e.g., https://<hash>--imatix.netlify.app
+// Regex patterns for dynamic deployments
 const netlifyPreview = /^https:\/\/[a-z0-9-]+--imatix\.netlify\.app$/i;
-
-// Regex to allow any iMatrix Surge.sh deployments:
-// e.g., https://imatrix-*.surge.sh or https://imatrix*.surge.sh
 const surgeImatrix = /^https:\/\/imatrix[a-z0-9-]*\.surge\.sh$/i;
 
-// Build a static allowlist from env + some sensible defaults
-const staticAllows = new Set([
+// Build allowed origins list
+const allowedOrigins = [
   'http://localhost:5173',
   'http://127.0.0.1:5173',
   'http://localhost:3000',
-  // stable production/staging domains (add what you actually use)
-  'https://imatix.netlify.app',         // main Netlify site (stable)
-  'https://imatrix-light-theme.surge.sh', // Surge.sh deployment
-  'https://gentle-industry.surge.sh',   // Previous Surge domain
-  // 'https://www.imatrix.lk',           // example custom domain (uncomment if/when used)
-]);
+  'http://localhost:4000',
+  'https://imatix.netlify.app',
+  'https://imatrix-light-theme.surge.sh',
+];
 
-// Support comma-separated env var: CORS_ORIGIN="https://foo.com,https://bar.com"
+// Add from environment variable
 if (process.env.CORS_ORIGIN) {
-  process.env.CORS_ORIGIN.split(',')
+  const envOrigins = process.env.CORS_ORIGIN.split(',')
     .map(s => s.trim())
-    .filter(Boolean)
-    .forEach(o => staticAllows.add(o));
+    .filter(Boolean);
+  allowedOrigins.push(...envOrigins);
 }
 
+// Remove duplicates
+const uniqueOrigins = [...new Set(allowedOrigins)];
+
+console.log('🔐 CORS Configuration:');
+console.log('  Allowed Origins:', uniqueOrigins);
+console.log('  Environment:', process.env.NODE_ENV || 'development');
+
 const corsOptions = {
-  origin(origin, cb) {
-    // Allow non-browser tools / same-origin / server-to-server
-    if (!origin) return cb(null, true);
-    if (staticAllows.has(origin) || netlifyPreview.test(origin) || surgeImatrix.test(origin)) {
-      return cb(null, true);
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, Postman, server-to-server, etc.)
+    if (!origin) {
+      return callback(null, true);
     }
-    return cb(new Error(`CORS: Origin not allowed: ${origin}`));
+
+    // Check static list
+    if (uniqueOrigins.includes(origin)) {
+      console.log(`✅ CORS allowed (static): ${origin}`);
+      return callback(null, true);
+    }
+
+    // Check regex patterns
+    if (netlifyPreview.test(origin)) {
+      console.log(`✅ CORS allowed (Netlify preview): ${origin}`);
+      return callback(null, true);
+    }
+
+    if (surgeImatrix.test(origin)) {
+      console.log(`✅ CORS allowed (Surge): ${origin}`);
+      return callback(null, true);
+    }
+
+    // Log rejected origins for debugging
+    console.warn(`❌ CORS rejected origin: ${origin}`);
+    callback(new Error(`CORS policy: Origin ${origin} is not allowed`));
   },
   credentials: true,
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range'],
   optionsSuccessStatus: 204,
+  preflightContinue: false,
 };
 
+// Apply CORS before any routes
 app.use(cors(corsOptions));
-// Ensure every preflight gets CORS headers (important with rate limiters/middleware order)
+
+// Explicitly handle OPTIONS requests for all routes
 app.options('*', cors(corsOptions));
 
-// Rate limiting - More permissive for development
+// Add CORS headers manually as additional fallback
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  
+  if (origin && (
+    uniqueOrigins.includes(origin) || 
+    netlifyPreview.test(origin) || 
+    surgeImatrix.test(origin)
+  )) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Requested-With');
+    res.header('Access-Control-Expose-Headers', 'Content-Range,X-Content-Range');
+  }
+  
+  next();
+});
+
+// ===============================
+// RATE LIMITING
+// ===============================
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: process.env.NODE_ENV === 'production' ? 100 : 1000,
   message: { ok: false, error: 'Too many requests' },
   standardHeaders: true,
   legacyHeaders: false,
-  // Fix for Railway proxy setup
   trustProxy: true,
   keyGenerator: (req) => {
     return req.ip || req.connection.remoteAddress || 'unknown';
   },
-  skip: (req) => process.env.NODE_ENV !== 'production' && (req.ip === '::1' || req.ip === '127.0.0.1')
+  skip: (req) => {
+    const isDev = process.env.NODE_ENV !== 'production';
+    const isLocal = req.ip === '::1' || req.ip === '127.0.0.1';
+    return isDev && isLocal;
+  }
 });
 
 const authLimiter = rateLimit({
@@ -121,12 +172,15 @@ const authLimiter = rateLimit({
   message: { ok: false, error: 'Too many auth attempts' },
   standardHeaders: true,
   legacyHeaders: false,
-  // Fix for Railway proxy setup
   trustProxy: true,
   keyGenerator: (req) => {
     return req.ip || req.connection.remoteAddress || 'unknown';
   },
-  skip: (req) => process.env.NODE_ENV !== 'production' && (req.ip === '::1' || req.ip === '127.0.0.1')
+  skip: (req) => {
+    const isDev = process.env.NODE_ENV !== 'production';
+    const isLocal = req.ip === '::1' || req.ip === '127.0.0.1';
+    return isDev && isLocal;
+  }
 });
 
 app.use('/auth', authLimiter);
@@ -137,32 +191,44 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // ===============================
-// FIXED STATIC FILE SERVING
+// STATIC FILE SERVING
 // ===============================
 
 // Determine upload path
 const staticUploadPath = join(__dirname, '..', 'public', 'uploads');
-console.log('Upload directory path:', staticUploadPath);
+console.log('📁 Upload directory path:', staticUploadPath);
 
 // Ensure upload directory exists
 if (!fs.existsSync(staticUploadPath)) {
-  console.log('Creating upload directory:', staticUploadPath);
+  console.log('📁 Creating upload directory:', staticUploadPath);
   fs.mkdirSync(staticUploadPath, { recursive: true });
 } else {
-  console.log('Upload directory exists');
+  console.log('📁 Upload directory exists');
   try {
     const files = fs.readdirSync(staticUploadPath);
-    console.log('Files in upload directory:', files.length, 'files');
+    console.log('📁 Files in upload directory:', files.length, 'files');
     if (files.length > 0) {
-      console.log('First few files:', files.slice(0, 5));
+      console.log('📁 First few files:', files.slice(0, 5));
     }
   } catch (err) {
-    console.error('Error reading upload directory:', err);
+    console.error('❌ Error reading upload directory:', err);
   }
 }
 
-// Directory listing route (AFTER static files)
-// This only runs if static file doesn't exist
+// Serve static files with proper CORS headers
+app.use('/uploads', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  console.log('📄 File request:', req.method, req.url);
+  next();
+}, express.static(staticUploadPath, {
+  maxAge: '1d',
+  etag: false,
+  lastModified: true
+}));
+
+// Directory listing route (for debugging)
 app.get('/uploads', (req, res) => {
   try {
     const files = fs.readdirSync(staticUploadPath);
@@ -182,7 +248,7 @@ app.get('/uploads', (req, res) => {
       })
     });
   } catch (error) {
-    console.error('Error listing upload directory:', error);
+    console.error('❌ Error listing upload directory:', error);
     res.status(500).json({
       ok: false,
       error: 'Could not list upload directory',
@@ -192,22 +258,14 @@ app.get('/uploads', (req, res) => {
   }
 });
 
-// Serve static files with proper CORS headers
-app.use('/uploads', (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
-  console.log('File request:', req.method, req.url);
-  next();
-}, express.static(staticUploadPath, {
-  maxAge: '1d',
-  etag: false,
-  lastModified: true
-}));
-
-// Request logging
+// Request logging middleware
 app.use((req, res, next) => {
-  logger.info({ method: req.method, url: req.url, ip: req.ip }, 'Request');
+  logger.info({ 
+    method: req.method, 
+    url: req.url, 
+    ip: req.ip,
+    origin: req.headers.origin 
+  }, 'Request');
   next();
 });
 
@@ -221,6 +279,7 @@ app.get('/', (req, res) => {
     ok: true,
     message: 'iMatrix API Server',
     version: '1.0.0',
+    timestamp: new Date().toISOString(),
     endpoints: {
       auth: '/auth',
       posts: '/posts',
@@ -241,7 +300,8 @@ app.get('/health', (req, res) => {
     ok: true, 
     status: 'healthy',
     timestamp: new Date().toISOString(),
-    uptime: process.uptime()
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'development'
   });
 });
 
@@ -253,29 +313,60 @@ app.use('/products', productRoutes);
 app.use('/solutions', solutionRoutes);
 app.use('/downloads', downloadRoutes);
 app.use('/media', mediaRoutes);
-
 app.use('/contact', contactRoutes);
 app.use('/audit', auditRoutes);
 
-// Error handling
+// ===============================
+// ERROR HANDLING
+// ===============================
+
+// Error handling middleware
 app.use((err, req, res, next) => {
-  logger.error(err);
+  // Handle CORS errors specifically
+  if (err.message && err.message.includes('CORS')) {
+    logger.error({ err, origin: req.headers.origin }, 'CORS Error');
+    return res.status(403).json({
+      ok: false,
+      error: 'CORS policy violation',
+      message: process.env.NODE_ENV === 'production' 
+        ? 'Access denied' 
+        : err.message
+    });
+  }
+
+  logger.error({ err, method: req.method, url: req.url }, 'Server Error');
   res.status(500).json({
     ok: false,
-    error: process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message
+    error: process.env.NODE_ENV === 'production' 
+      ? 'Internal server error' 
+      : err.message
   });
 });
 
 // 404 handler
 app.use('*', (req, res) => {
-  res.status(404).json({ ok: false, error: 'Route not found' });
+  res.status(404).json({ 
+    ok: false, 
+    error: 'Route not found',
+    path: req.originalUrl
+  });
 });
 
-// Start server
+// ===============================
+// START SERVER
+// ===============================
+
 app.listen(PORT, () => {
-  logger.info(`Server running on port ${PORT}`);
-  logger.info(`Environment: ${process.env.NODE_ENV}`);
-  logger.info(`Upload path: ${staticUploadPath}`);
+  console.log('');
+  console.log('🚀 ================================');
+  console.log(`🚀 iMatrix API Server Running`);
+  console.log('🚀 ================================');
+  console.log(`📍 Port: ${PORT}`);
+  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`📁 Upload path: ${staticUploadPath}`);
+  console.log(`🔐 CORS Origins: ${uniqueOrigins.length} configured`);
+  console.log('🚀 ================================');
+  console.log('');
 });
 
 export default app;
