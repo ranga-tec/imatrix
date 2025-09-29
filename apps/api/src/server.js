@@ -57,6 +57,10 @@ app.use(helmet({
 // e.g., https://<hash>--imatix.netlify.app
 const netlifyPreview = /^https:\/\/[a-z0-9-]+--imatix\.netlify\.app$/i;
 
+// Regex to allow any Surge.sh deploy for this site:
+// e.g., https://imatrix-light-theme.surge.sh
+const surgePreview = /^https:\/\/[a-z0-9-]+\.surge\.sh$/i;
+
 // Build a static allowlist from env + some sensible defaults
 const staticAllows = new Set([
   'http://localhost:5173',
@@ -64,6 +68,7 @@ const staticAllows = new Set([
   'http://localhost:3000',
   // stable production/staging domains (add what you actually use)
   'https://imatix.netlify.app',         // main Netlify site (stable)
+  'https://imatrix-light-theme.surge.sh', // main Surge.sh site
   // 'https://www.imatrix.lk',           // example custom domain (uncomment if/when used)
 ]);
 
@@ -79,7 +84,7 @@ const corsOptions = {
   origin(origin, cb) {
     // Allow non-browser tools / same-origin / server-to-server
     if (!origin) return cb(null, true);
-    if (staticAllows.has(origin) || netlifyPreview.test(origin)) {
+    if (staticAllows.has(origin) || netlifyPreview.test(origin) || surgePreview.test(origin)) {
       return cb(null, true);
     }
     return cb(new Error(`CORS: Origin not allowed: ${origin}`));
