@@ -19,6 +19,7 @@ const postSchema = z.object({
   categoryIds: z.array(z.number()).optional()
 });
 
+
 // Get all posts (public - only published, admin - all)
 router.get('/', async (req, res) => {
   try {
@@ -67,6 +68,31 @@ router.get('/', async (req, res) => {
   }
 });
 
+
+// Get post by ID (for admin editing)
+router.get('/id/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const post = await prisma.post.findUnique({
+      where: { id: parseInt(id) },
+      include: {
+        categories: true,
+        media: {
+          select: { id: true, url: true, alt: true, caption: true, type: true }
+        }
+      }
+    });
+
+    if (!post) {
+      return res.status(404).json({ ok: false, error: 'Post not found' });
+    }
+
+    res.json({ ok: true, data: post });
+  } catch (error) {
+    throw error;
+  }
+});
 // Get post by slug (public)
 router.get('/:slug', async (req, res) => {
   try {

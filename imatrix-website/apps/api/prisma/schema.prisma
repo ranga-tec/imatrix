@@ -1,121 +1,102 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// ===============================
+// FIXED PRISMA SCHEMA - MANY-TO-MANY RELATIONSHIPS
+// ===============================
+// Replace your current schema.prisma with this:
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
-}
-
-enum Role {
-  ADMIN
-  EDITOR
-  VIEWER
 }
 
 model User {
   id           Int      @id @default(autoincrement())
   email        String   @unique
   passwordHash String
-  role         Role     @default(EDITOR)
+  role         String   @default("EDITOR")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-
   @@map("users")
 }
 
 model Category {
-  id   Int    @id @default(autoincrement())
-  name String @unique
-  slug String @unique
-
-  posts Post[]
-
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  slug  String @unique
+  posts Post[] @relation("CategoryToPost")
   @@map("categories")
 }
 
 model Post {
-  id         Int      @id @default(autoincrement())
+  id         Int        @id @default(autoincrement())
   title      String
-  slug       String   @unique
+  slug       String     @unique
   body       String?
   excerpt    String?
-  published  Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  categories Category[]
-  media      Media[]
-
+  published  Boolean    @default(false)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  media      Media[]    @relation("PostMedia")  // ✅ Many-to-many
+  categories Category[] @relation("CategoryToPost")
   @@map("posts")
 }
 
 model Product {
-  id          Int     @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String
-  slug        String  @unique
+  slug        String   @unique
   summary     String?
   description String?
   specs       Json?
   price       String?
-  featured    Boolean @default(false)
+  featured    Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
-  media Media[]
-
+  media       Media[]  @relation("ProductMedia")  // ✅ Many-to-many
   @@map("products")
 }
 
 model Solution {
-  id          Int     @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String
-  slug        String  @unique
+  slug        String   @unique
   description String?
   benefits    Json?
   features    Json?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
-  media Media[]
-
+  media       Media[]  @relation("SolutionMedia")  // ✅ Many-to-many
   @@map("solutions")
 }
 
 model Download {
-  id        Int      @id @default(autoincrement())
-  title     String
-  fileUrl   String
-  fileName  String?
-  fileSize  String?
-  kind      String   // "manual", "software", "report", "brochure"
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?   // ✅ ADD THIS LINE
+  fileUrl     String
+  fileName    String?
+  fileSize    String?
+  kind        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   @@map("downloads")
 }
 
+// ✅ FIXED: Many-to-many relationships
 model Media {
-  id         Int     @id @default(autoincrement())
-  url        String
-  fileName   String?
-  type       String  @default("image") // image, video, file
-  alt        String?
-  caption    String?
-  createdAt  DateTime @default(now())
-
-  // Relations
-  postId     Int?
-  productId  Int?
-  solutionId Int?
-
-  post     Post?     @relation(fields: [postId], references: [id], onDelete: Cascade)
-  product  Product?  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  solution Solution? @relation(fields: [solutionId], references: [id], onDelete: Cascade)
-
+  id        Int       @id @default(autoincrement())
+  url       String
+  fileName  String?
+  type      String    @default("image")
+  alt       String?
+  caption   String?
+  createdAt DateTime  @default(now())
+  posts     Post[]    @relation("PostMedia")     // ✅ Many-to-many with posts
+  products  Product[] @relation("ProductMedia")  // ✅ Many-to-many with products
+  solutions Solution[] @relation("SolutionMedia") // ✅ Many-to-many with solutions
   @@map("media")
 }
 
@@ -127,18 +108,16 @@ model ContactMessage {
   company   String?
   message   String
   createdAt DateTime @default(now())
-
   @@map("contact_messages")
 }
 
 model AuditLog {
-  id          Int      @id @default(autoincrement())
-  actorEmail  String
-  action      String   // CREATE, UPDATE, DELETE
-  entity      String   // Post, Product, etc.
-  entityId    Int?
-  meta        Json?    // Additional context
-  createdAt   DateTime @default(now())
-
+  id         Int      @id @default(autoincrement())
+  actorEmail String
+  action     String
+  entity     String
+  entityId   Int?
+  meta       Json?
+  createdAt  DateTime @default(now())
   @@map("audit_logs")
 }

@@ -1,3 +1,9 @@
+// ===============================
+//  DOWNLOADS PAGE COMPONENT - FIXED CATEGORIES
+// ===============================
+// imatrix-website/apps/web/src/pages/DownloadsPage.jsx 
+// Displays a list of downloadable resources with search and filter functionality.
+
 import React, { useState, useEffect } from 'react';
 import { useApi } from '../contexts/ApiContext';
 import { 
@@ -16,13 +22,13 @@ const FILE_ICONS = {
   default: FileText
 };
 
+// ✅ FIXED: Categories now match backend exactly (manual, software, report, brochure)
 const categories = [
   { id: 'all', name: 'All Downloads' },
-  { id: 'datasheets', name: 'Product Datasheets' },
-  { id: 'manuals', name: 'User Manuals' },
+  { id: 'manual', name: 'User Manuals' },
   { id: 'software', name: 'Software & Drivers' },
-  { id: 'brochures', name: 'Marketing Materials' },
-  { id: 'certificates', name: 'Certificates' },
+  { id: 'report', name: 'Reports & Datasheets' },
+  { id: 'brochure', name: 'Brochures & Marketing' },
 ];
 
 export default function DownloadsPage() {
@@ -61,14 +67,14 @@ export default function DownloadsPage() {
       filtered = filtered.filter(download =>
         download.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (download.description && download.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (download.category && download.category.toLowerCase().includes(searchTerm.toLowerCase()))
+        (download.kind && download.kind.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
 
-    // Filter by category
+    // ✅ FIXED: Filter by exact backend 'kind' field (manual, software, report, brochure)
     if (selectedCategory !== 'all') {
       filtered = filtered.filter(download =>
-        download.category?.toLowerCase().includes(selectedCategory.toLowerCase())
+        download.kind === selectedCategory
       );
     }
 
@@ -80,11 +86,9 @@ export default function DownloadsPage() {
     return FILE_ICONS[type] || FILE_ICONS.default;
   };
 
-  const formatFileSize = (bytes) => {
-    if (!bytes) return 'Unknown size';
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+  const formatFileSize = (size) => {
+    // ✅ Display as-is since backend already formats it
+    return size || 'Unknown size';
   };
 
   const formatDate = (dateString) => {
@@ -99,12 +103,12 @@ export default function DownloadsPage() {
   const handleDownload = async (download) => {
     try {
       // Track download (optional analytics)
-      await api.post(`/downloads/${download.id}/track`);
+      // await api.post(`/downloads/${download.id}/track`);
       
       // Trigger download
       const link = document.createElement('a');
-      link.href = download.url;
-      link.download = download.filename || download.title;
+      link.href = download.fileUrl;
+      link.download = download.fileName || download.title; 
       link.target = '_blank';
       document.body.appendChild(link);
       link.click();
@@ -112,7 +116,7 @@ export default function DownloadsPage() {
     } catch (error) {
       console.error('Download failed:', error);
       // Fallback: open in new window
-      window.open(download.url, '_blank');
+      window.open(download.fileUrl, '_blank');
     }
   };
 
@@ -139,17 +143,17 @@ export default function DownloadsPage() {
             
             <div className="mt-3 flex items-center gap-4 text-xs text-white/50">
               {download.fileSize && (
-                <span>{formatFileSize(download.fileSize)}</span>
+                <span>{download.fileSize}</span>
               )}
-              {download.updatedAt && (
+              {download.createdAt && (
                 <span className="flex items-center gap-1">
                   <Calendar className="h-3 w-3" />
-                  {formatDate(download.updatedAt)}
+                  {formatDate(download.createdAt)}
                 </span>
               )}
-              {download.category && (
-                <span className="rounded bg-white/10 px-2 py-1">
-                  {download.category}
+              {download.kind && (
+                <span className="rounded bg-white/10 px-2 py-1 capitalize">
+                  {download.kind}
                 </span>
               )}
             </div>

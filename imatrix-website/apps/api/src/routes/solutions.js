@@ -45,6 +45,29 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Get solution by ID (for admin editing)
+router.get('/id/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const solution = await prisma.solution.findUnique({
+      where: { id: parseInt(id) },
+      include: {
+        media: {
+          select: { id: true, url: true, alt: true, caption: true, type: true }
+        }
+      }
+    });
+
+    if (!solution) {
+      return res.status(404).json({ ok: false, error: 'Solution not found' });
+    }
+
+    res.json({ ok: true, data: solution });
+  } catch (error) {
+    throw error;
+  }
+});
 // Get solution by slug (public)
 router.get('/:slug', async (req, res) => {
   try {

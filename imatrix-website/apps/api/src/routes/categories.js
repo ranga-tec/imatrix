@@ -14,7 +14,29 @@ const categoryPrisma = new PrismaClient();
 const categorySchema = z.object({
   name: z.string().min(1)
 });
+// Get category by ID (for admin editing)
+categoryRouter.get('/id/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const category = await categoryPrisma.category.findUnique({
+      where: { id: parseInt(id) },
+      include: {
+        _count: {
+          select: { posts: true }
+        }
+      }
+    });
 
+    if (!category) {
+      return res.status(404).json({ ok: false, error: 'Category not found' });
+    }
+
+    res.json({ ok: true, data: category });
+  } catch (error) {
+    throw error;
+  }
+});
 // Get all categories (public)
 categoryRouter.get('/', async (req, res) => {
   try {

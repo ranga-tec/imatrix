@@ -1,3 +1,8 @@
+// ===============================
+//  DATABASE SEED SCRIPT (seed.js)
+// ===============================
+// imatrix-website/apps/api/src/scripts/seed.js 
+
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';

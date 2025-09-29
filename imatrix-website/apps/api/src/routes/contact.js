@@ -37,6 +37,7 @@ contactRouter.post('/', async (req, res) => {
   }
 });
 
+
 // Get all contact messages (Admin/Editor)
 contactRouter.get('/', authenticate, requireRole('ADMIN', 'EDITOR'), async (req, res) => {
   try {

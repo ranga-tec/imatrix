@@ -1,3 +1,8 @@
+// ===============================
+// COMPLETE SERVER.JS WITH FIXED STATIC FILE SERVING
+// ===============================
+// apps/api/src/server.js
+
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -35,35 +40,87 @@ const logger = pino({
 });
 
 const app = express();
+// Trust proxy for Railway
+app.set('trust proxy', true);
 const PORT = process.env.PORT || 8080;
-
-// Ensure upload directory exists
-const uploadDir = join(__dirname, '..', process.env.UPLOAD_PATH || 'public/uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
 
 // Security middleware
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
 
-app.use(cors({
-  origin: process.env.CORS_ORIGIN?.split(',') || 'http://localhost:5173',
-  credentials: true
-}));
+// ===============================
+// CORS CONFIGURATION
+// ===============================
 
-// Rate limiting
+// Regex to allow any Netlify deploy-preview for this site:
+// e.g., https://<hash>--imatix.netlify.app
+const netlifyPreview = /^https:\/\/[a-z0-9-]+--imatix\.netlify\.app$/i;
+
+// Build a static allowlist from env + some sensible defaults
+const staticAllows = new Set([
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'http://localhost:3000',
+  // stable production/staging domains (add what you actually use)
+  'https://imatix.netlify.app',         // main Netlify site (stable)
+  // 'https://www.imatrix.lk',           // example custom domain (uncomment if/when used)
+]);
+
+// Support comma-separated env var: CORS_ORIGIN="https://foo.com,https://bar.com"
+if (process.env.CORS_ORIGIN) {
+  process.env.CORS_ORIGIN.split(',')
+    .map(s => s.trim())
+    .filter(Boolean)
+    .forEach(o => staticAllows.add(o));
+}
+
+const corsOptions = {
+  origin(origin, cb) {
+    // Allow non-browser tools / same-origin / server-to-server
+    if (!origin) return cb(null, true);
+    if (staticAllows.has(origin) || netlifyPreview.test(origin)) {
+      return cb(null, true);
+    }
+    return cb(new Error(`CORS: Origin not allowed: ${origin}`));
+  },
+  credentials: true,
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
+// Ensure every preflight gets CORS headers (important with rate limiters/middleware order)
+app.options('*', cors(corsOptions));
+
+// Rate limiting - More permissive for development
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: { ok: false, error: 'Too many requests' }
+  max: process.env.NODE_ENV === 'production' ? 100 : 1000,
+  message: { ok: false, error: 'Too many requests' },
+  standardHeaders: true,
+  legacyHeaders: false,
+  // Fix for Railway proxy setup
+  trustProxy: true,
+  keyGenerator: (req) => {
+    return req.ip || req.connection.remoteAddress || 'unknown';
+  },
+  skip: (req) => process.env.NODE_ENV !== 'production' && (req.ip === '::1' || req.ip === '127.0.0.1')
 });
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 5,
-  message: { ok: false, error: 'Too many auth attempts' }
+  max: process.env.NODE_ENV === 'production' ? 5 : 50,
+  message: { ok: false, error: 'Too many auth attempts' },
+  standardHeaders: true,
+  legacyHeaders: false,
+  // Fix for Railway proxy setup
+  trustProxy: true,
+  keyGenerator: (req) => {
+    return req.ip || req.connection.remoteAddress || 'unknown';
+  },
+  skip: (req) => process.env.NODE_ENV !== 'production' && (req.ip === '::1' || req.ip === '127.0.0.1')
 });
 
 app.use('/auth', authLimiter);
@@ -73,8 +130,74 @@ app.use(limiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Serve static files
-app.use('/uploads', express.static(join(__dirname, '..', 'public/uploads')));
+// ===============================
+// FIXED STATIC FILE SERVING
+// ===============================
+
+// Determine upload path
+const staticUploadPath = join(__dirname, '..', 'public', 'uploads');
+console.log('Upload directory path:', staticUploadPath);
+
+// Ensure upload directory exists
+if (!fs.existsSync(staticUploadPath)) {
+  console.log('Creating upload directory:', staticUploadPath);
+  fs.mkdirSync(staticUploadPath, { recursive: true });
+} else {
+  console.log('Upload directory exists');
+  try {
+    const files = fs.readdirSync(staticUploadPath);
+    console.log('Files in upload directory:', files.length, 'files');
+    if (files.length > 0) {
+      console.log('First few files:', files.slice(0, 5));
+    }
+  } catch (err) {
+    console.error('Error reading upload directory:', err);
+  }
+}
+
+// Directory listing route (AFTER static files)
+// This only runs if static file doesn't exist
+app.get('/uploads', (req, res) => {
+  try {
+    const files = fs.readdirSync(staticUploadPath);
+    res.json({
+      ok: true,
+      uploadPath: staticUploadPath,
+      filesCount: files.length,
+      files: files.map(file => {
+        const filePath = join(staticUploadPath, file);
+        const stats = fs.statSync(filePath);
+        return {
+          name: file,
+          size: stats.size,
+          modified: stats.mtime,
+          url: `/uploads/${file}`
+        };
+      })
+    });
+  } catch (error) {
+    console.error('Error listing upload directory:', error);
+    res.status(500).json({
+      ok: false,
+      error: 'Could not list upload directory',
+      uploadPath: staticUploadPath,
+      details: error.message
+    });
+  }
+});
+
+// Serve static files with proper CORS headers
+app.use('/uploads', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  console.log('File request:', req.method, req.url);
+  next();
+}, express.static(staticUploadPath, {
+  maxAge: '1d',
+  etag: false,
+  lastModified: true
+}));
 
 // Request logging
 app.use((req, res, next) => {
@@ -82,9 +205,38 @@ app.use((req, res, next) => {
   next();
 });
 
-// Health check
+// ===============================
+// API ROUTES
+// ===============================
+
+// Health check route
+app.get('/', (req, res) => {
+  res.json({
+    ok: true,
+    message: 'iMatrix API Server',
+    version: '1.0.0',
+    endpoints: {
+      auth: '/auth',
+      posts: '/posts',
+      products: '/products',
+      solutions: '/solutions',
+      categories: '/categories',
+      downloads: '/downloads',
+      media: '/media',
+      contact: '/contact',
+      audit: '/audit',
+      health: '/health'
+    }
+  });
+});
+
 app.get('/health', (req, res) => {
-  res.json({ ok: true, timestamp: new Date().toISOString() });
+  res.json({ 
+    ok: true, 
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
+  });
 });
 
 // API routes
@@ -95,6 +247,7 @@ app.use('/products', productRoutes);
 app.use('/solutions', solutionRoutes);
 app.use('/downloads', downloadRoutes);
 app.use('/media', mediaRoutes);
+
 app.use('/contact', contactRoutes);
 app.use('/audit', auditRoutes);
 
@@ -116,6 +269,7 @@ app.use('*', (req, res) => {
 app.listen(PORT, () => {
   logger.info(`Server running on port ${PORT}`);
   logger.info(`Environment: ${process.env.NODE_ENV}`);
+  logger.info(`Upload path: ${staticUploadPath}`);
 });
 
 export default app;

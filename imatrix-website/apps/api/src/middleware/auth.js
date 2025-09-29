@@ -1,7 +1,21 @@
-import jwt from 'jsonwebtoken';
-import { PrismaClient } from '@prisma/client';
+// ===============================
+//  AUTH MIDDLEWARE
+// ===============================
+// imatrix-website/apps/api/src/middleware/auth.js 
+// Middleware for handling authentication and authorization using JWT and Prisma.
 
-const prisma = new PrismaClient();
+import jwt from 'jsonwebtoken';
+
+let prisma;
+
+// Initialize Prisma client lazily
+async function getPrismaClient() {
+  if (!prisma) {
+    const { PrismaClient } = await import('@prisma/client');
+    prisma = new PrismaClient();
+  }
+  return prisma;
+}
 
 export function authenticate(req, res, next) {
   const token = req.headers.authorization?.replace('Bearer ', '');
@@ -39,7 +53,8 @@ export async function getCurrentUser(req, res, next) {
   }
 
   try {
-    const user = await prisma.user.findUnique({
+    const prismaClient = await getPrismaClient();
+    const user = await prismaClient.user.findUnique({
       where: { id: req.user.id },
       select: { id: true, email: true, role: true, createdAt: true }
     });

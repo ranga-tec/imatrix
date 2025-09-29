@@ -1,3 +1,8 @@
+// ===============================
+//  PRODUCTS ROUTES (products.js)
+// ===============================
+//imatrix-website/apps/api/src/routes/products.js
+
 import express from 'express';
 import { z } from 'zod';
 import { PrismaClient } from '@prisma/client';
@@ -51,6 +56,30 @@ router.get('/', async (req, res) => {
   }
 });
 
+
+// Get product by ID (for admin editing)
+router.get('/id/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const product = await prisma.product.findUnique({
+      where: { id: parseInt(id) },
+      include: {
+        media: {
+          select: { id: true, url: true, alt: true, caption: true, type: true }
+        }
+      }
+    });
+
+    if (!product) {
+      return res.status(404).json({ ok: false, error: 'Product not found' });
+    }
+
+    res.json({ ok: true, data: product });
+  } catch (error) {
+    throw error;
+  }
+});
 // Get product by slug (public)
 router.get('/:slug', async (req, res) => {
   try {

@@ -1,6 +1,8 @@
+// ===============================
+//  ADMIN APP COMPONENT (AdminApp.jsx)
+// ===============================
 import React from 'react';
-import { Admin, Resource, CustomRoutes } from 'react-admin';
-import { Route } from 'react-router-dom';
+import { Admin, Resource } from 'react-admin';
 import simpleRestProvider from 'ra-data-simple-rest';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -20,7 +22,6 @@ import Dashboard from './Dashboard';
 const authProvider = {
   login: () => Promise.resolve(),
   logout: () => {
-    // This will be handled by our Auth context
     return Promise.resolve();
   },
   checkAuth: () => Promise.resolve(),
@@ -32,93 +33,183 @@ const authProvider = {
   getPermissions: () => Promise.resolve('admin'),
 };
 
-// Custom data provider with auth headers
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8080';
+// API configuration
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:4000';
 
-const dataProvider = simpleRestProvider(API_BASE, (url, options = {}) => {
-  const token = localStorage.getItem('auth_token');
-  if (!options.headers) {
-    options.headers = new Headers({ Accept: 'application/json' });
-  }
-  if (token) {
-    options.headers.set('Authorization', `Bearer ${token}`);
-  }
-  return { url, options };
-});
-
-// Transform the data provider to handle our API format
+// Enhanced data provider with better error handling
+// Complete transformed data provider with all required methods
 const transformedDataProvider = {
-  ...dataProvider,
   getList: async (resource, params) => {
     const { page, perPage } = params.pagination;
     const { field, order } = params.sort;
-    const query = {
+    const query = new URLSearchParams({
       ...params.filter,
       _sort: field,
       _order: order,
       _start: (page - 1) * perPage,
       _end: page * perPage,
-    };
-
-    const url = `${API_BASE}/${resource}?${new URLSearchParams(query)}`;
-    const token = localStorage.getItem('auth_token');
-    
-    const response = await fetch(url, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
     });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const json = await response.json();
+    const url = `${API_BASE}/${resource}?${query}`;
+    const token = localStorage.getItem('auth_token');
     
-    if (!json.ok) {
-      throw new Error(json.error || 'API error');
-    }
+    try {
+      const response = await fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
 
-    return {
-      data: json.data,
-      total: json.data.length, // You might want to implement proper pagination
-    };
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const json = await response.json();
+      
+      if (!json.ok) {
+        throw new Error(json.error || 'API error');
+      }
+
+      return {
+        data: json.data || [],
+        total: json.total || json.data?.length || 0,
+      };
+    } catch (error) {
+      console.error(`Error fetching ${resource}:`, error);
+      throw error;
+    }
   },
 
   getOne: async (resource, params) => {
-    const token = localStorage.getItem('auth_token');
-    
-    const response = await fetch(`${API_BASE}/${resource}/${params.id}`, {
-      headers: {
+  const token = localStorage.getItem('auth_token'); // ✅ Add missing token
+  
+  try {
+    // ✅ Use correct URL pattern that matches your API routes
+    const url = `${API_BASE}/${resource}/id/${params.id}`;
+    const response = await fetch(url, {
+      headers: { 
         'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     });
-
+    
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-
-    const json = await response.json();
     
-    if (!json.ok) {
-      throw new Error(json.error || 'API error');
-    }
+    const result = await response.json();
+    if (!result.ok) throw new Error(result.error || 'Failed to fetch');
+    
+    return { data: result.data };
+  } catch (error) {
+    console.error(`Error fetching ${resource}/${params.id}:`, error);
+    throw error;
+  }
+},
 
-    return { data: json.data };
+  getMany: async (resource, params) => {
+    const token = localStorage.getItem('auth_token');
+    const query = new URLSearchParams();
+    params.ids.forEach(id => query.append('id', id));
+    
+    try {
+      const response = await fetch(`${API_BASE}/${resource}?${query}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const json = await response.json();
+      
+      if (!json.ok) {
+        throw new Error(json.error || 'API error');
+      }
+
+      return { data: json.data || [] };
+    } catch (error) {
+      console.error(`Error fetching many ${resource}:`, error);
+      throw error;
+    }
+  },
+
+  getManyReference: async (resource, params) => {
+    const { target, id } = params;
+    const { page, perPage } = params.pagination;
+    const { field, order } = params.sort;
+    
+    const query = new URLSearchParams({
+      [target]: id,
+      ...params.filter,
+      _sort: field,
+      _order: order,
+      _start: (page - 1) * perPage,
+      _end: page * perPage,
+    });
+
+    const url = `${API_BASE}/${resource}?${query}`;
+    const token = localStorage.getItem('auth_token');
+    
+    try {
+      const response = await fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const json = await response.json();
+      
+      if (!json.ok) {
+        throw new Error(json.error || 'API error');
+      }
+
+      return {
+        data: json.data || [],
+        total: json.total || json.data?.length || 0,
+      };
+    } catch (error) {
+      console.error(`Error fetching ${resource} reference:`, error);
+      throw error;
+    }
   },
 
   create: async (resource, params) => {
-    const token = localStorage.getItem('auth_token');
-    
-    const response = await fetch(`${API_BASE}/${resource}`, {
+  const token = localStorage.getItem('auth_token');
+  
+  try {
+    let url = `${API_BASE}/${resource}`;
+    let headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    };
+    let body = JSON.stringify(params.data);
+
+    // ✅ Special handling for media uploads
+    if (resource === 'media' && params.data.file) {
+      url = `${API_BASE}/media/upload`;
+      const formData = new FormData();
+      formData.append('file', params.data.file);
+      if (params.data.alt) formData.append('alt', params.data.alt);
+      if (params.data.caption) formData.append('caption', params.data.caption);
+      
+      headers = { 'Authorization': `Bearer ${token}` }; // Remove Content-Type for FormData
+      body = formData;
+    }
+
+    const response = await fetch(url, {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(params.data),
+      headers,
+      body,
     });
 
     if (!response.ok) {
@@ -132,11 +223,17 @@ const transformedDataProvider = {
     }
 
     return { data: json.data };
-  },
+  } catch (error) {
+    console.error(`Error creating ${resource}:`, error);
+    throw error;
+  }
+},
 
   update: async (resource, params) => {
-    const token = localStorage.getItem('auth_token');
-    
+  const token = localStorage.getItem('auth_token');
+  
+  try {
+    // ✅ Use PATCH method and correct URL pattern
     const response = await fetch(`${API_BASE}/${resource}/${params.id}`, {
       method: 'PATCH',
       headers: {
@@ -157,30 +254,98 @@ const transformedDataProvider = {
     }
 
     return { data: json.data };
+  } catch (error) {
+    console.error(`Error updating ${resource}/${params.id}:`, error);
+    throw error;
+  }
+},
+
+  updateMany: async (resource, params) => {
+    const token = localStorage.getItem('auth_token');
+    const results = [];
+    
+    try {
+      for (const id of params.ids) {
+        const response = await fetch(`${API_BASE}/${resource}/${id}`, {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(params.data),
+        });
+
+        if (response.ok) {
+          const json = await response.json();
+          if (json.ok) {
+            results.push(id);
+          }
+        }
+      }
+      
+      return { data: results };
+    } catch (error) {
+      console.error(`Error updating many ${resource}:`, error);
+      throw error;
+    }
   },
 
   delete: async (resource, params) => {
     const token = localStorage.getItem('auth_token');
     
-    const response = await fetch(`${API_BASE}/${resource}/${params.id}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
+    try {
+      const response = await fetch(`${API_BASE}/${resource}/${params.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const json = await response.json();
+      
+      if (!json.ok) {
+        throw new Error(json.error || 'API error');
+      }
+
+      return { data: { id: params.id } };
+    } catch (error) {
+      console.error(`Error deleting ${resource}/${params.id}:`, error);
+      throw error;
     }
+  },
 
-    const json = await response.json();
+  deleteMany: async (resource, params) => {
+    const token = localStorage.getItem('auth_token');
+    const results = [];
     
-    if (!json.ok) {
-      throw new Error(json.error || 'API error');
-    }
+    try {
+      for (const id of params.ids) {
+        const response = await fetch(`${API_BASE}/${resource}/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
 
-    return { data: { id: params.id } };
+        if (response.ok) {
+          const json = await response.json();
+          if (json.ok) {
+            results.push(id);
+          }
+        }
+      }
+      
+      return { data: results };
+    } catch (error) {
+      console.error(`Error deleting many ${resource}:`, error);
+      throw error;
+    }
   },
 };
 
@@ -206,6 +371,7 @@ export default function AdminApp() {
       }}
       dashboard={Dashboard}
       title="iMatrix Admin"
+      basename="/admin"
     >
       {/* Main content resources */}
       <Resource
@@ -214,7 +380,7 @@ export default function AdminApp() {
         edit={PostEdit}
         create={PostCreate}
         show={PostShow}
-        options={{ label: 'Posts/News' }}
+        options={{ label: 'News/Posts' }}
       />
       <Resource
         name="categories"
@@ -258,12 +424,12 @@ export default function AdminApp() {
       {user?.role === 'ADMIN' && (
         <>
           <Resource
-            name="users"
-            list={UserList}
-            edit={UserEdit}
-            create={UserCreate}
-            options={{ label: 'Users & Roles' }}
-          />
+  name="auth/users"  
+  list={UserList}
+  edit={UserEdit}
+  create={UserCreate}
+  options={{ label: 'Users & Roles' }}
+/>
           <Resource
             name="audit"
             list={AuditList}
